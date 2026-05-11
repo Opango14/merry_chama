@@ -74,3 +74,46 @@ def group_detail(request, pk):
         'contributions': contributions,
         'total_members': total_members,
     })
+
+@login_required
+def record_contribution(request, group_id):
+    group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.method == 'POST':
+        amount = Decimal(request.POST['amount'])
+        savings_amount = amount * (group.savings_rate / Decimal('100'))
+        payout_amount = amount - savings_amount
+
+        Contribution.objects.create(
+            group=group,
+            member=request.user,
+            cycle=group.current_cycle,
+            total_paid=amount,
+            savings_amount=savings_amount,
+            payout_amount=payout_amount
+        )
+
+        group.savings_pot += savings_amount
+        group.save()
+
+        contributed_count = Contribution.objects.filter(group=group, cycle=group.current_cycle).count()
+        if contributed_count >= group.members.count():
+            messages.success(request, f"Cycle, {group.current_cycle} complete! Payouts & savings ready.")
+
+        messages.success(request, f"Contribution recorded! Savings deducted: KSh {savings_amount}")
+        return redirect('group_detail', pk=group.pk)
+    
+    return render(request, 'record_contribution.html', {'group': group})
+
+@login_required
+def distributive_savings(request, group_id):
+    group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.method == 'POST':
+        if group.savings_pot > 0:
+            members_count = group.members.count()
+            share = group.savings_pot / Decimal(members_count)
+            messages.success(request, f"Savings pot of KSh {group.savings_pot} distributed equally! Each member gets KSh {share:.2f}")
+            group.savings_pot = 0
+            group.current_cycle += 1
+            group.save()
+        return redirect('group_detail', pk=group.pk)
+    return redirect('group_detail', pk=group.pk)
