@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-10">
+    <div class="bg-white shadow-2xl rounded-3xl px-10">
+        <h2 class="text-3xl font-bold text-center mb-8 text-green-700">Create New Merry-Go-Round</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="space-y-8">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Group Name</label>
+                    {{ form.name }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">contribution Amount (Kshs)</label>
+                    {{ form.contribution_amount }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Savings Rate (%)</label>
+                    {{ form.savings_rate }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    {{ form.frequency }}
+                </div>
+            </div>
+
+            <button type="submit" class="mt-10 w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-5 rounded-2xl text-xl transition">Create Chama Group</button>
+        </form>
+    </div>
+
+    <p class="text-center text-sm text-gray-500 mt-8">
+        Tip: Start with the people you trust. You can add more numbers later.
+    </p>
+</div>
+{% endblock %}
