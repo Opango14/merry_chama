@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-10">
+    <h1 class="text-4xl font-bold text-green-700">Welcome, {{ user.username }} </h1>
+    <p class="text-gray-600 mt-2">Manage your Merry-Go-Round groups</p>
+</div>
+
+<div class="flex justify-between items-center mb-8">
+    <h2 class="text-2xl font-semibold">Your Chamas</h2>
+    <a href="{% url 'create_group' %}" class="bg-green-700 text-white px-8 py-3 rounded-2xl font-medium flex items-center gap-2 hover:bg-green-800">
+        <i class="fas fa-plus"></i> Create New Chama
+    </a>
+</div>
+
+{% if groups %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for group in groups %}
+        <div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition">
+            <div class="h-2 bg-green-600"></div>
+            <div class="p-6">
+                <h3 class="text-xl font-semibold">{{% group.name %}}</h3>
+                <p class="text-green-600 font-mono mt-1">
+                    Kshs {{ group.contribution_amount }} • {{ group.frequency|title }}
+                </p>
+
+                <div class="mt-6 flex justify-between text-sm">
+                    <div>
+                        <span class="block text-gray-500">Savings Rate</span>
+                        <span class="font-semibold">{{ group.savings_rate }}</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-500">Savings Pot</span>
+                        <span class="font-semibold text-green-700">{{ group.savings_pot }}</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-500">Cycle</span>
+                        <span class="font-semibold">{{ group.current_cycle }}</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'group_detail' group.pk %}" class="mt-8 block text-center bg-green-100 text-green-700 py-3 rounded-2xl font-medium hover:bg-green-200 transition">Open Group</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="bg-white rounded-3xl p-12 text-center">
+        <p class="text-2xl text-gray-400 mb-4">You are not part of any Chama yet</p>
+        <a href="{% url 'create_group' %}" class="inline-block text-white bg-green-700 px-10 py-4 rounded-2xl font-semibold">Create Your First Chama</a>
+    </div>
+{% endif %}
+{% endblock %}
