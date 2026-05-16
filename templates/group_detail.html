@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-white shadow-xl rounded-3xl p-8">
+    <h1 class="text-3xl font-bold">{{ group.name }}</h1>
+    <p class="text-green-600 text-xl">Contribution: <span class="font-mono">Kshs {{ group.contribution_amount }}</span> • Savings rate: {{ group.savings_rate }}%</p>
+
+    <div class="grid grid-cols-2 gap-8 mt-8">
+        <!-- Members & Rotation -->
+        <div>
+            <h2 class="text-lg font-semibold mb-3">Members (Rotation Order)</h2>
+            <ol class="space-y-2">
+                {% for member in members %}
+                <li class="flex justify-between bg-gray-100 p-3 rounded-2xl">
+                    <span>{{ forloop.counter }}. {{ member.username }}</span>
+                    {% if member == next_recipient %}
+                        <span class="bg-green-600 text-white text-xs px-3 py-1 rounded-xl">Next to receive!</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}
