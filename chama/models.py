@@ -7,7 +7,7 @@ class ChamaGroup(models.Model):
     name = models.CharField(max_length=100)
     contribution_amount = models.DecimalField(max_digits=12, decimal_places=2)
     savings_rate = models.DecimalField(max_digits=5, decimal_places=2, default=10.00)
-    frequency = models.CharField(max_length=20, choices=[('weekly', 'Weekly'), ('monthly', 'Monthly')])
+    frequency = models.CharField(max_length=20, choices=[('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly')])
     start_date = models.DateField(auto_now_add=True)
     members = models.ManyToManyField(User, through='Membership')
     savings_pot = models.DecimalField(max_digits=12, decimal_places=2, default=0)
