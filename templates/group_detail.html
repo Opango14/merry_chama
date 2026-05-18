@@ -35,7 +35,7 @@
     </div>
 
     <!-- Record Contribution -->
-     <div class="mt-12">
+    <div class="mt-12">
         <h2 class="text-xl font-semibold mb-4">Record Your Contribution</h2>
         <form method="POST" action="{% url 'record_contribution' group.pk %}" class="flex gap-4">
             {% csrf_token %}
@@ -43,6 +43,40 @@
             <button type="submit" class="bg-green-700 text-white px-12 rounded-2xl font-semibold">Pay Now</button>
         </form>
         <!-- <p class="text-sm text-gray-500 mt-2">Live Savings Deductions</p> -->
-     </div>
+    </div>
+
+    <!-- Recent Contributions -->
+    <div class="mt-12">
+        <h2 class="font-semibold mb-4">Cycle {{ group.current_cycle }} Contributions</h2>
+        <table class="w-full">
+            <thead>
+                <tr class="border-b">
+                    <th class="text-left py-3">Member</th>
+                    <th class="text-right">Paid</th>
+                    <th class="text-right">Savings</th>
+                    <th class="text-right">To Recipient</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in contributions %}
+                <tr class="border-b">
+                    <td class="py-4">{{ c.member.username }}</td>
+                    <td class="text-right font-mono">Kshs {{ c.total_paid }}</td>
+                    <td class="text-right text-amber-600 font-mono">Kshs {{ c.savings_amount }}</td>
+                    <td class="text-right font-mono text-green-700">Kshs {{ c.payout_amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<script>
+    document.querySelector('input[name="amount"]').addEventListener('input', function() {
+        let amt = parseFloat(this.value) || 0;
+        let rate = Number("{{ group.savings_rate }}");
+        let savings = (amt * rate / 100).toFixed(2);
+        console.log(`Savings deducted: Kshs {savings}`);
+    })
+</script>
 {% endblock %}
