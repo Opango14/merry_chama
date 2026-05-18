@@ -6,6 +6,7 @@
     <p class="text-green-600 text-xl">Contribution: <span class="font-mono">Kshs {{ group.contribution_amount }}</span> • Savings rate: {{ group.savings_rate }}%</p>
 
     <div class="grid grid-cols-2 gap-8 mt-8">
+
         <!-- Members & Rotation -->
         <div>
             <h2 class="text-lg font-semibold mb-3">Members (Rotation Order)</h2>
@@ -20,6 +21,28 @@
                 {% endfor %}
             </ol>
         </div>
+
+        <!-- Savings Pot -->
+         <div class="bg-green-50 border border-green-200 p-6 rounded-3xl">
+            <h2 class="text-lg font-semibold">Savings Pot</h2>
+            <p class="text-5xl font-bold text-green-700">Kshs {{ group.savings_pot }}</p>
+            <form method="POST" action="{% url 'distributive_savings' group.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="mt-6 w-full bg-green-600 text-white py-4 rounded-2xl font-medium text-lg">Distribute Equally Now</button>
+            </form>
+            <p class="text-xs text-gray-500 mt-3">Shared among {{ total_members }} members at the end of the cycle</p>
+         </div>
     </div>
+
+    <!-- Record Contribution -->
+     <div class="mt-12">
+        <h2 class="text-xl font-semibold mb-4">Record Your Contribution</h2>
+        <form method="POST" action="{% url 'record_contribution' group.pk %}" class="flex gap-4">
+            {% csrf_token %}
+            <input type="number" name="amount" value="{{ group.contribution_amount }}" step="0.01" class="flex-1 border border-gray-300 rounded-2xl px-6 py-4 text-xl">
+            <button type="submit" class="bg-green-700 text-white px-12 rounded-2xl font-semibold">Pay Now</button>
+        </form>
+        <!-- <p class="text-sm text-gray-500 mt-2">Live Savings Deductions</p> -->
+     </div>
 </div>
 {% endblock %}
