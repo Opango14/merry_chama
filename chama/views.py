@@ -56,6 +56,22 @@ def create_group(request):
     return render(request, 'create_group.html', {'form': form})
 
 @login_required
+def join_group(request):
+    if request.method == 'POST':
+        code = request.POST.get('join_code').strip().upper()
+        try:
+            group = ChamaGroup.objects.get(join_code=code)
+            if Membership.objects.filter(group=group, user=request.user).exists():
+                messages.warning(request, "You are already a member")
+            else:
+                last_order = Membership.objects.filter(group=group).count() + 1
+                Membership.objects.create(user=request.user, group=group, rotation_order=last_order)
+                messages.success(request, f"Successfully joined {group.name}")
+        except ChamaGroup.DoesNotExist:
+            messages.error(request, "Invalid join code")
+    return render(request, 'join_group.html')
+
+@login_required
 def group_detail(request, pk):
     group = get_object_or_404(ChamaGroup, pk=pk)
     membership = Membership.objects.filter(group=group).order_by('rotation_order')
