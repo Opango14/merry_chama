@@ -21,6 +21,11 @@ class ChamaGroup(models.Model):
             self.join_code = get_random_string(length=8).upper()
         super().save(*args, **kwargs)
 
+    @property
+    def creator(self):
+        first_member = self.membership_set.order_by('rotation_order').first()
+        return first_member.user if first_member else None
+
     def __str__(self):
         return self.name
 

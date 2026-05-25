@@ -83,6 +83,10 @@ def group_detail(request, pk):
     next_recipient_index = (group.current_cycle - 1) % total_members
     next_recipient = members[next_recipient_index] if members else None
 
+    expected_payout = 0
+    if total_members > 0:
+        expected_payout = (group.contribution_amount - (group.contribution_amount * group.savings_rate / Decimal('100'))) * Decimal(total_members)
+
     contributions = Contribution.objects.filter(group=group, cycle=group.current_cycle).order_by('-paid_at')
 
     return render(request, 'group_detail.html', {
@@ -91,19 +95,36 @@ def group_detail(request, pk):
         'next_recipient': next_recipient,
         'contributions': contributions,
         'total_members': total_members,
+        'expected_payout': expected_payout,
     })
 
 @login_required
 def record_contribution(request, group_id):
     group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.user != group.creator:
+        messages.error(request, "Only the group creator can update contribution records.")
+        return redirect('group_detail', pk=group.pk)
+
     if request.method == 'POST':
+        member_id = request.POST.get('member_id')
+        try:
+            from django.contrib.auth.models import User
+            member_user = group.members.get(id=member_id)
+        except Exception:
+            messages.error(request, "Invalid member selected.")
+            return redirect('group_detail', pk=group.pk)
+
+        if Contribution.objects.filter(group=group, member=member_user, cycle=group.current_cycle).exists():
+            messages.error(request, f"{member_user.username} has already contributed in cycle {group.current_cycle}.")
+            return redirect('group_detail', pk=group.pk)
+
         amount = Decimal(request.POST['amount'])
         savings_amount = amount * (group.savings_rate / Decimal('100'))
         payout_amount = amount - savings_amount
 
         Contribution.objects.create(
             group=group,
-            member=request.user,
+            member=member_user,
             cycle=group.current_cycle,
             total_paid=amount,
             savings_amount=savings_amount,
@@ -115,9 +136,9 @@ def record_contribution(request, group_id):
 
         contributed_count = Contribution.objects.filter(group=group, cycle=group.current_cycle).count()
         if contributed_count >= group.members.count():
-            messages.success(request, f"Cycle, {group.current_cycle} complete! Payouts & savings ready.")
-
-        messages.success(request, f"Contribution recorded! Savings deducted: KSh {savings_amount}")
+            messages.success(request, f"Cycle {group.current_cycle} complete! Payouts & savings ready.")
+        else:
+            messages.success(request, f"Contribution recorded for {member_user.username}! Savings deducted: KSh {savings_amount}")
         return redirect('group_detail', pk=group.pk)
     
     return render(request, 'record_contribution.html', {'group': group})
@@ -134,4 +155,15 @@ def distributive_savings(request, group_id):
             group.current_cycle += 1
             group.save()
         return redirect('group_detail', pk=group.pk)
+    return redirect('group_detail', pk=group.pk)
+
+@login_required
+def update_savings_rate(request, group_id):
+    group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.method == 'POST' and request.user == group.creator:
+        new_rate = request.POST.get('savings_rate')
+        if new_rate is not None:
+            group.savings_rate = Decimal(new_rate)
+            group.save()
+            messages.success(request, f"Savings rate updated to {new_rate}%.")
     return redirect('group_detail', pk=group.pk)

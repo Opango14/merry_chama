@@ -5,7 +5,23 @@
     <div class="flex justify-between items-start">
         <div>
             <h1 class="text-3xl font-bold">{{ group.name }}</h1>
-            <p class="text-green-600 text-xl">Contribution: <span class="font-mono">Kshs {{ group.contribution_amount }}</span> • Savings rate: {{ group.savings_rate }}%</p>
+            <div class="flex items-center gap-4 mt-2">
+                <p class="text-green-600 text-xl">Contribution: <span class="font-mono">Kshs {{ group.contribution_amount }}</span></p>
+                <div class="flex items-center gap-2">
+                    <span class="text-green-600 text-xl">• Savings rate:</span>
+                    {% if request.user == group.creator %}
+                    <form method="POST" action="{% url 'update_savings_rate' group.pk %}" class="flex items-center">
+                        {% csrf_token %}
+                        <input type="number" name="savings_rate" value="{{ group.savings_rate }}" step="0.01"
+                            class="border border-gray-300 rounded-lg px-2 py-1 w-20 text-center"
+                            onchange="this.form.submit()">
+                        <span class="ml-1 text-green-600 text-xl">%</span>
+                    </form>
+                    {% else %}
+                    <span class="text-green-600 text-xl">{{ group.savings_rate }}%</span>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         <div class="bg-gray-100 px-4 py-2 rounded-xl text-center">
             <span class="block text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Invite Code</span>
@@ -23,7 +39,10 @@
                 <li class="flex justify-between bg-gray-100 p-3 rounded-2xl">
                     <span>{{ forloop.counter }}. {{ member.username }}</span>
                     {% if member == next_recipient %}
+                    <div class="text-right">
                         <span class="bg-green-600 text-white text-xs px-3 py-1 rounded-xl">Next to receive!</span>
+                        <div class="text-sm font-semibold mt-1 text-green-700">Expected Payout: Kshs {{ expected_payout|floatformat:2 }}</div>
+                    </div>
                     {% endif %}
                 </li>
                 {% endfor %}
@@ -43,15 +62,22 @@
     </div>
 
     <!-- Record Contribution -->
+    {% if request.user == group.creator %}
     <div class="mt-12">
-        <h2 class="text-xl font-semibold mb-4">Record Your Contribution</h2>
+        <h2 class="text-xl font-semibold mb-4">Record Contribution (Admin Only)</h2>
         <form method="POST" action="{% url 'record_contribution' group.pk %}" class="flex gap-4">
             {% csrf_token %}
-            <input type="number" name="amount" value="{{ group.contribution_amount }}" step="0.01" class="flex-1 border border-gray-300 rounded-2xl px-6 py-4 text-xl">
-            <button type="submit" class="bg-green-700 text-white px-12 rounded-2xl font-semibold">Pay Now</button>
+            <select name="member_id" class="border border-gray-300 rounded-2xl px-6 py-4 text-xl bg-white" required>
+                <option value="" disabled selected>Select Member</option>
+                {% for member in members %}
+                <option value="{{ member.id }}">{{ member.username }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="amount" value="{{ group.contribution_amount }}" step="0.01" class="flex-1 border border-gray-300 rounded-2xl px-6 py-4 text-xl" required>
+            <button type="submit" class="bg-green-700 text-white px-12 rounded-2xl font-semibold">Record Payment</button>
         </form>
-        <!-- <p class="text-sm text-gray-500 mt-2">Live Savings Deductions</p> -->
     </div>
+    {% endif %}
 
     <!-- Recent Contributions -->
     <div class="mt-12">
