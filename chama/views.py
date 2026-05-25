@@ -63,10 +63,12 @@ def join_group(request):
             group = ChamaGroup.objects.get(join_code=code)
             if Membership.objects.filter(group=group, user=request.user).exists():
                 messages.warning(request, "You are already a member")
+                return redirect('group_detail', pk=group.pk)
             else:
                 last_order = Membership.objects.filter(group=group).count() + 1
                 Membership.objects.create(user=request.user, group=group, rotation_order=last_order)
                 messages.success(request, f"Successfully joined {group.name}")
+                return redirect('group_detail', pk=group.pk)
         except ChamaGroup.DoesNotExist:
             messages.error(request, "Invalid join code")
     return render(request, 'join_group.html')

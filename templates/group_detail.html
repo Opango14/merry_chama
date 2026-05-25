@@ -2,8 +2,16 @@
 
 {% block content %}
 <div class="bg-white shadow-xl rounded-3xl p-8">
-    <h1 class="text-3xl font-bold">{{ group.name }}</h1>
-    <p class="text-green-600 text-xl">Contribution: <span class="font-mono">Kshs {{ group.contribution_amount }}</span> • Savings rate: {{ group.savings_rate }}%</p>
+    <div class="flex justify-between items-start">
+        <div>
+            <h1 class="text-3xl font-bold">{{ group.name }}</h1>
+            <p class="text-green-600 text-xl">Contribution: <span class="font-mono">Kshs {{ group.contribution_amount }}</span> • Savings rate: {{ group.savings_rate }}%</p>
+        </div>
+        <div class="bg-gray-100 px-4 py-2 rounded-xl text-center">
+            <span class="block text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Invite Code</span>
+            <span class="font-mono text-xl font-bold text-gray-800 tracking-wider">{{ group.join_code }}</span>
+        </div>
+    </div>
 
     <div class="grid grid-cols-2 gap-8 mt-8">
 
@@ -23,7 +31,7 @@
         </div>
 
         <!-- Savings Pot -->
-         <div class="bg-green-50 border border-green-200 p-6 rounded-3xl">
+        <div class="bg-green-50 border border-green-200 p-6 rounded-3xl">
             <h2 class="text-lg font-semibold">Savings Pot</h2>
             <p class="text-5xl font-bold text-green-700">Kshs {{ group.savings_pot }}</p>
             <form method="POST" action="{% url 'distributive_savings' group.pk %}">
@@ -31,7 +39,7 @@
                 <button type="submit" class="mt-6 w-full bg-green-600 text-white py-4 rounded-2xl font-medium text-lg">Distribute Equally Now</button>
             </form>
             <p class="text-xs text-gray-500 mt-3">Shared among {{ total_members }} members at the end of the cycle</p>
-         </div>
+        </div>
     </div>
 
     <!-- Record Contribution -->
@@ -72,7 +80,7 @@
 </div>
 
 <script>
-    document.querySelector('input[name="amount"]').addEventListener('input', function() {
+    document.querySelector('input[name="amount"]').addEventListener('input', function () {
         let amt = parseFloat(this.value) || 0;
         let rate = Number("{{ group.savings_rate }}");
         let savings = (amt * rate / 100).toFixed(2);

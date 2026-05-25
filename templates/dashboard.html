@@ -8,9 +8,16 @@
 
 <div class="flex justify-between items-center mb-8">
     <h2 class="text-2xl font-semibold">Your Chamas</h2>
-    <a href="{% url 'create_group' %}" class="bg-green-700 text-white px-8 py-3 rounded-2xl font-medium flex items-center gap-2 hover:bg-green-800">
-        <i class="fas fa-plus"></i> Create New Chama
-    </a>
+    <div class="flex gap-4">
+        <a href="{% url 'join_group' %}"
+            class="bg-gray-100 text-green-700 border border-green-700 px-8 py-3 rounded-2xl font-medium flex items-center gap-2 hover:bg-green-50 transition">
+            <i class="fas fa-sign-in-alt"></i> Join Chama
+        </a>
+        <a href="{% url 'create_group' %}"
+            class="bg-green-700 text-white px-8 py-3 rounded-2xl font-medium flex items-center gap-2 hover:bg-green-800 transition">
+            <i class="fas fa-plus"></i> Create New Chama
+        </a>
+    </div>
 </div>
 
 {% if groups %}
