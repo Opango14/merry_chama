@@ -12,5 +12,6 @@ urlpatterns = [
     path('group/<int:pk>', views.group_detail, name='group_detail'),
     path('group/<int:group_id>/contribute/', views.record_contribution, name='record_contribution'),
     path('group/<int:group_id>/distributive-savings/', views.distributive_savings, name='distributive_savings'),
+    path('group/<int:group_id>/payout-recipient/', views.payout_recipient, name='payout_recipient'),
     path('group/<int:group_id>/update-savings-rate/', views.update_savings_rate, name='update_savings_rate'),
 ]

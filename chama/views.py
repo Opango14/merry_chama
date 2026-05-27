@@ -167,3 +167,21 @@ def update_savings_rate(request, group_id):
             group.save()
             messages.success(request, f"Savings rate updated to {new_rate}%.")
     return redirect('group_detail', pk=group.pk)
+
+@login_required
+def payout_recipient(request, group_id):
+    group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.method == 'POST':
+        # Find the next recipient
+        membership = Membership.objects.filter(group=group).order_by('rotation_order')
+        members = [m.user for m in membership]
+        total_members = membership.count()
+        next_recipient_index = (group.current_cycle - 1) % total_members
+        next_recipient = members[next_recipient_index] if members else None
+        
+        # We don't touch group.savings_pot, we just move to next cycle
+        group.current_cycle += 1
+        group.save()
+        messages.success(request, f"Payout given to {next_recipient.username if next_recipient else 'recipient'}! Cycle advanced.")
+        return redirect('group_detail', pk=group.pk)
+    return redirect('group_detail', pk=group.pk)

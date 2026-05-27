@@ -40,8 +40,13 @@
                     <span>{{ forloop.counter }}. {{ member.username }}</span>
                     {% if member == next_recipient %}
                     <div class="text-right">
-                        <span class="bg-green-600 text-white text-xs px-3 py-1 rounded-xl">Next to receive!</span>
-                        <div class="text-sm font-semibold mt-1 text-green-700">Expected Payout: Kshs {{ expected_payout|floatformat:2 }}</div>
+                        <span class="bg-green-600 text-white text-xs px-3 py-1 rounded-xl inline-block mb-1">Next to receive!</span>
+                        <div class="text-sm font-semibold mt-1 text-green-700">Amount to Receive: Kshs {{ expected_payout|floatformat:2 }}</div>
+                        <form method="POST" action="{% url 'payout_recipient' group.pk %}" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-xl transition-colors">Give to Recipient and Next</button>
+                        </form>
                     </div>
                     {% endif %}
                 </li>
