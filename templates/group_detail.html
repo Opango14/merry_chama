@@ -23,10 +23,12 @@
                 </div>
             </div>
         </div>
+        {% if request.user == group.creator %}
         <div class="bg-gray-100 px-4 py-2 rounded-xl text-center">
             <span class="block text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Invite Code</span>
             <span class="font-mono text-xl font-bold text-gray-800 tracking-wider">{{ group.join_code }}</span>
         </div>
+        {% endif %}
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
@@ -55,7 +57,8 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                     <div>
                         <p class="text-lg text-gray-600 mb-1">Recipient: <span class="font-bold text-xl text-gray-800">{{ next_recipient.username }}</span></p>
-                        <p class="text-3xl font-bold text-blue-700">Kshs {{ expected_payout|floatformat:2 }}</p>
+                        <p class="text-3xl font-bold text-blue-700">Kshs {{ collected_payout|floatformat:2 }}</p>
+                        <p class="text-sm text-gray-500">Expected total: Kshs {{ expected_payout|floatformat:2 }}</p>
                     </div>
                     <form method="POST" action="{% url 'payout_recipient' group.pk %}" class="w-full md:w-auto">
                         {% csrf_token %}

@@ -88,6 +88,7 @@ def group_detail(request, pk):
         expected_payout = (group.contribution_amount - (group.contribution_amount * group.savings_rate / Decimal('100'))) * Decimal(total_members)
 
     contributions = Contribution.objects.filter(group=group, cycle=group.current_cycle).order_by('-paid_at')
+    collected_payout = sum(c.payout_amount for c in contributions) or Decimal('0')
 
     return render(request, 'group_detail.html', {
         'group': group,
@@ -96,6 +97,7 @@ def group_detail(request, pk):
         'contributions': contributions,
         'total_members': total_members,
         'expected_payout': expected_payout,
+        'collected_payout': collected_payout,
     })
 
 @login_required
