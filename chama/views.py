@@ -154,7 +154,6 @@ def distributive_savings(request, group_id):
             share = group.savings_pot / Decimal(members_count)
             messages.success(request, f"Savings pot of KSh {group.savings_pot} distributed equally! Each member gets KSh {share:.2f}")
             group.savings_pot = 0
-            group.current_cycle += 1
             group.save()
         return redirect('group_detail', pk=group.pk)
     return redirect('group_detail', pk=group.pk)
