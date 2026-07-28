@@ -148,6 +148,9 @@ def record_contribution(request, group_id):
 @login_required
 def distributive_savings(request, group_id):
     group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.user != group.creator:
+        messages.error(request, "Only the group admin can distribute savings.")
+        return redirect('group_detail', pk=group.pk)
     if request.method == 'POST':
         if group.savings_pot > 0:
             members_count = group.members.count()
@@ -172,6 +175,9 @@ def update_savings_rate(request, group_id):
 @login_required
 def payout_recipient(request, group_id):
     group = get_object_or_404(ChamaGroup, pk=group_id)
+    if request.user != group.creator:
+        messages.error(request, "Only the group admin can issue payouts.")
+        return redirect('group_detail', pk=group.pk)
     if request.method == 'POST':
         # Find the next recipient
         membership = Membership.objects.filter(group=group).order_by('rotation_order')
