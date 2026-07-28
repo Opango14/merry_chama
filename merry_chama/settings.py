@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'chama'
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# Use database-backed sessions so they survive server restarts
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False   # keep alive after browser close
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30   # 30 days
 
 
 MIDDLEWARE = [
