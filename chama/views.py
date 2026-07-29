@@ -3,7 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+from django.http import HttpResponse
 from decimal import Decimal
+import csv
+import io
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 from .models import ChamaGroup, Membership, Contribution
 from .forms import ChamaGroupForm
 
@@ -192,3 +198,109 @@ def payout_recipient(request, group_id):
         messages.success(request, f"Payout given to {next_recipient.username if next_recipient else 'recipient'}! Cycle advanced.")
         return redirect('group_detail', pk=group.pk)
     return redirect('group_detail', pk=group.pk)
+
+@login_required
+def download_transactions(request, group_id):
+    group = get_object_or_404(ChamaGroup, pk=group_id)
+
+    # Only members of the group can download
+    if not group.members.filter(pk=request.user.pk).exists():
+        messages.error(request, "You are not a member of this group.")
+        return redirect('dashboard')
+
+    contributions = Contribution.objects.filter(group=group).order_by('cycle', 'paid_at')
+
+    # ── Build workbook ──────────────────────────────────────────────
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Transactions"
+
+    # Colour palette
+    GREEN  = "1B5E20"
+    LGREEN = "E8F5E9"
+    AMBER  = "FF8F00"
+    GREY   = "F5F5F5"
+
+    # ── Group info header block ──────────────────────────────────────
+    ws.merge_cells('A1:F1')
+    title_cell = ws['A1']
+    title_cell.value = f"{group.name} — Transaction Report"
+    title_cell.font = Font(bold=True, size=14, color="FFFFFF")
+    title_cell.fill = PatternFill("solid", fgColor=GREEN)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+    ws.row_dimensions[1].height = 30
+
+    ws['A2'] = f"Frequency: {group.frequency.capitalize()}   |   Contribution: KSh {group.contribution_amount}   |   Savings rate: {group.savings_rate}%   |   Current cycle: {group.current_cycle}"
+    ws.merge_cells('A2:F2')
+    ws['A2'].font = Font(italic=True, size=10, color="555555")
+    ws['A2'].alignment = Alignment(horizontal="center")
+    ws.row_dimensions[2].height = 18
+
+    ws.append([])   # blank spacer row 3
+
+    # ── Column headers (row 4) ───────────────────────────────────────
+    headers = ['Cycle', 'Member', 'Amount Paid (KSh)', 'Savings (KSh)', 'To Recipient (KSh)', 'Date & Time']
+    ws.append(headers)
+    header_row = ws.max_row
+    for col_num, _ in enumerate(headers, start=1):
+        cell = ws.cell(row=header_row, column=col_num)
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.fill = PatternFill("solid", fgColor=GREEN)
+        cell.alignment = Alignment(horizontal="center")
+
+    # ── Data rows ────────────────────────────────────────────────────
+    total_paid = total_savings = total_payout = Decimal('0')
+    for i, c in enumerate(contributions):
+        row_bg = LGREEN if i % 2 == 0 else "FFFFFF"
+        row_data = [
+            c.cycle,
+            c.member.username,
+            float(c.total_paid),
+            float(c.savings_amount),
+            float(c.payout_amount),
+            c.paid_at.strftime('%Y-%m-%d %H:%M'),
+        ]
+        ws.append(row_data)
+        r = ws.max_row
+        for col_num in range(1, 7):
+            cell = ws.cell(row=r, column=col_num)
+            cell.fill = PatternFill("solid", fgColor=row_bg)
+            cell.alignment = Alignment(horizontal="center" if col_num != 2 else "left")
+            if col_num in (3, 4, 5):
+                cell.number_format = '#,##0.00'
+        total_paid    += c.total_paid
+        total_savings += c.savings_amount
+        total_payout  += c.payout_amount
+
+    # ── Totals row ───────────────────────────────────────────────────
+    ws.append([])
+    totals_row = ws.max_row + 1
+    ws.cell(row=totals_row, column=1, value="TOTALS")
+    ws.cell(row=totals_row, column=3, value=float(total_paid))
+    ws.cell(row=totals_row, column=4, value=float(total_savings))
+    ws.cell(row=totals_row, column=5, value=float(total_payout))
+    for col_num in range(1, 7):
+        cell = ws.cell(row=totals_row, column=col_num)
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill("solid", fgColor=LGREEN)
+        cell.alignment = Alignment(horizontal="center")
+        if col_num in (3, 4, 5):
+            cell.number_format = '#,##0.00'
+
+    # ── Auto column widths ───────────────────────────────────────────
+    col_widths = [10, 20, 22, 18, 22, 20]
+    for i, width in enumerate(col_widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = width
+
+    # ── Stream response ──────────────────────────────────────────────
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    filename = f"{group.name.replace(' ', '_')}_transactions.xlsx"
+    response = HttpResponse(
+        buffer.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
