@@ -3,8 +3,13 @@
 {% block content %}
 <!-- Header -->
 <div class="mb-6 sm:mb-10">
-    <h1 class="text-2xl sm:text-4xl font-bold text-green-700">Welcome, {{ user.username }}</h1>
-    <p class="text-gray-600 mt-1 sm:mt-2">Manage your Merry-Go-Round groups</p>
+    <h1 id="dash-welcome"
+        class="text-2xl sm:text-4xl font-bold text-green-700 split-parent">
+        Welcome, {{ user.username }}
+    </h1>
+    <p id="dash-sub" class="text-gray-600 mt-1 sm:mt-2 opacity-0">
+        Manage your Merry-Go-Round groups
+    </p>
 </div>
 
 <!-- Action bar -->
@@ -65,4 +70,33 @@
         </a>
     </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.fonts.ready.then(() => {
+    /* Welcome heading — word-by-word, project green-700 */
+    SplitText('#dash-welcome', {
+        splitType : 'words',
+        delay     : 80,
+        duration  : 0.7,
+        ease      : 'power3.out',
+        from      : { opacity: 0, y: 36 },
+        to        : { opacity: 1, y: 0 },
+        threshold : 0.05,
+        rootMargin: '0px',
+        textAlign : 'left',
+        onLetterAnimationComplete: () => {
+            gsap.to('#dash-sub', {
+                opacity : 1,
+                y       : 0,
+                duration: 0.5,
+                ease    : 'power2.out'
+            });
+        }
+    });
+
+    gsap.set('#dash-sub', { y: 12 });
+});
+</script>
 {% endblock %}

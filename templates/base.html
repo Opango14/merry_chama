@@ -6,6 +6,16 @@
         <title>ChamaFlow - Merry-Go-Round</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+        <!-- GSAP + ScrollTrigger (free CDN) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+        <style>
+            /* Clip overflow on animated parents so letters don't show outside bounds */
+            .split-parent { display: inline-block; }
+            .split-char, .split-word { display: inline-block; will-change: transform, opacity; }
+        </style>
     </head>
     <body class="bg-gray-50 font-sans">
 
@@ -63,10 +73,123 @@
             {% block content %}{% endblock %}
         </div>
 
+        <!-- ── Hamburger toggle ── -->
         <script>
             const toggle = document.getElementById('nav-toggle');
             const menu   = document.getElementById('nav-menu');
             toggle.addEventListener('click', () => menu.classList.toggle('hidden'));
         </script>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             SplitText — vanilla JS port of the React Bits component.
+             API mirrors the React component props exactly.
+             Usage:
+               SplitText('#my-el', {
+                 splitType: 'chars',          // 'chars' | 'words' | 'lines' | 'words, chars'
+                 delay: 60,                   // stagger delay in ms
+                 duration: 0.8,
+                 ease: 'power3.out',
+                 from: { opacity: 0, y: 40 },
+                 to:   { opacity: 1, y: 0 },
+                 threshold: 0.1,
+                 rootMargin: '-100px',
+                 textAlign: 'center',
+                 onLetterAnimationComplete: () => console.log('done')
+               });
+        ════════════════════════════════════════════════════════════════ -->
+        <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        function SplitText(selector, {
+            delay                    = 50,
+            duration                 = 1.25,
+            ease                     = 'power3.out',
+            splitType                = 'chars',
+            from                     = { opacity: 0, y: 40 },
+            to                       = { opacity: 1, y: 0 },
+            threshold                = 0.1,
+            rootMargin               = '-100px',
+            textAlign                = 'center',
+            onLetterAnimationComplete = null
+        } = {}) {
+            const el = typeof selector === 'string'
+                ? document.querySelector(selector)
+                : selector;
+            if (!el) return;
+
+            /* ── split the DOM ─────────────────────────────────────── */
+            const rawText = el.textContent;
+            el.innerHTML  = '';
+            el.style.textAlign = textAlign;
+
+            const targets = [];
+            const wantChars  = splitType.includes('chars');
+            const wantWords  = splitType.includes('words');
+
+            const words = rawText.split(/(\s+)/);          // keep whitespace tokens
+            words.forEach(token => {
+                if (/^\s+$/.test(token)) {
+                    // pure whitespace — keep as text node
+                    el.appendChild(document.createTextNode(token));
+                    return;
+                }
+                if (wantChars) {
+                    // wrap each character
+                    const wordWrap = document.createElement('span');
+                    wordWrap.className = 'split-word';
+                    token.split('').forEach(ch => {
+                        const span = document.createElement('span');
+                        span.className   = 'split-char';
+                        span.textContent = ch;
+                        wordWrap.appendChild(span);
+                        targets.push(span);
+                    });
+                    el.appendChild(wordWrap);
+                } else {
+                    // word-level split
+                    const span = document.createElement('span');
+                    span.className   = 'split-word';
+                    span.textContent = token;
+                    el.appendChild(span);
+                    targets.push(span);
+                }
+            });
+
+            /* ── build ScrollTrigger start string ─────────────────── */
+            const startPct = (1 - threshold) * 100;
+            const m        = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(rootMargin.trim());
+            const mVal     = m ? parseFloat(m[1]) : 0;
+            const mUnit    = m ? (m[2] || 'px') : 'px';
+            const offset   = mVal === 0 ? ''
+                           : mVal < 0   ? ` -=${Math.abs(mVal)}${mUnit}`
+                                        : ` +=${mVal}${mUnit}`;
+            const start    = `top ${startPct}%${offset}`;
+
+            /* ── animate ───────────────────────────────────────────── */
+            gsap.fromTo(
+                targets,
+                { ...from },
+                {
+                    ...to,
+                    duration,
+                    ease,
+                    stagger: delay / 1000,
+                    force3D: true,
+                    scrollTrigger: {
+                        trigger    : el,
+                        start,
+                        once       : true,
+                        fastScrollEnd: true
+                    },
+                    onComplete: () => {
+                        if (typeof onLetterAnimationComplete === 'function')
+                            onLetterAnimationComplete();
+                    }
+                }
+            );
+        }
+        </script>
+
+        {% block extra_scripts %}{% endblock %}
     </body>
 </html>
