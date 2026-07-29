@@ -1,40 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="mb-10">
-    <h1 class="text-4xl font-bold text-green-700">Welcome, {{ user.username }} </h1>
-    <p class="text-gray-600 mt-2">Manage your Merry-Go-Round groups</p>
+<!-- Header -->
+<div class="mb-6 sm:mb-10">
+    <h1 class="text-2xl sm:text-4xl font-bold text-green-700">Welcome, {{ user.username }}</h1>
+    <p class="text-gray-600 mt-1 sm:mt-2">Manage your Merry-Go-Round groups</p>
 </div>
 
-<div class="flex justify-between items-center mb-8">
-    <h2 class="text-2xl font-semibold">Your Chamas</h2>
-    <div class="flex gap-4">
+<!-- Action bar -->
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
+    <h2 class="text-xl sm:text-2xl font-semibold">Your Chamas</h2>
+    <div class="flex flex-col xs:flex-row gap-3">
         <a href="{% url 'join_group' %}"
-            class="bg-gray-100 text-green-700 border border-green-700 px-8 py-3 rounded-2xl font-medium flex items-center gap-2 hover:bg-green-50 transition">
+           class="flex items-center justify-center gap-2 bg-gray-100 text-green-700 border border-green-700 px-6 py-3 rounded-2xl font-medium hover:bg-green-50 transition">
             <i class="fas fa-sign-in-alt"></i> Join Chama
         </a>
         <a href="{% url 'create_group' %}"
-            class="bg-green-700 text-white px-8 py-3 rounded-2xl font-medium flex items-center gap-2 hover:bg-green-800 transition">
+           class="flex items-center justify-center gap-2 bg-green-700 text-white px-6 py-3 rounded-2xl font-medium hover:bg-green-800 transition">
             <i class="fas fa-plus"></i> Create New Chama
         </a>
     </div>
 </div>
 
 {% if groups %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {% for group in groups %}
         <div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition">
             <div class="h-2 bg-green-600"></div>
-            <div class="p-6">
-                <h3 class="text-xl font-semibold">{{ group.name }}</h3>
-                <p class="text-green-600 font-mono mt-1">
+            <div class="p-5 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-semibold">{{ group.name }}</h3>
+                <p class="text-green-600 font-mono mt-1 text-sm sm:text-base">
                     Kshs {{ group.contribution_amount }} • {{ group.frequency|title }}
                 </p>
 
-                <div class="mt-6 flex justify-between text-sm">
+                <div class="mt-4 sm:mt-6 flex justify-between text-sm">
                     <div>
                         <span class="block text-gray-500">Savings Rate</span>
-                        <span class="font-semibold">{{ group.savings_rate }}</span>
+                        <span class="font-semibold">{{ group.savings_rate }}%</span>
                     </div>
                     <div>
                         <span class="block text-gray-500">Savings Pot</span>
@@ -46,15 +48,21 @@
                     </div>
                 </div>
 
-                <a href="{% url 'group_detail' group.pk %}" class="mt-8 block text-center bg-green-100 text-green-700 py-3 rounded-2xl font-medium hover:bg-green-200 transition">Open Group</a>
+                <a href="{% url 'group_detail' group.pk %}"
+                   class="mt-6 block text-center bg-green-100 text-green-700 py-3 rounded-2xl font-medium hover:bg-green-200 transition">
+                   Open Group
+                </a>
             </div>
         </div>
         {% endfor %}
     </div>
 {% else %}
-    <div class="bg-white rounded-3xl p-12 text-center">
-        <p class="text-2xl text-gray-400 mb-4">You are not part of any Chama yet</p>
-        <a href="{% url 'create_group' %}" class="inline-block text-white bg-green-700 px-10 py-4 rounded-2xl font-semibold">Create Your First Chama</a>
+    <div class="bg-white rounded-3xl p-8 sm:p-12 text-center">
+        <p class="text-xl sm:text-2xl text-gray-400 mb-4">You are not part of any Chama yet</p>
+        <a href="{% url 'create_group' %}"
+           class="inline-block text-white bg-green-700 px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-semibold">
+            Create Your First Chama
+        </a>
     </div>
 {% endif %}
 {% endblock %}

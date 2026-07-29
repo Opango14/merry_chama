@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="text-center py-20">
-    <h1 class="text-6xl font-bold text-green-700 mb-6">Merry-Go-Round + Smart Savings</h1>
-    <p class="text-2xl text-gray-600 mb-10">Contribute • Rotate • Save • Share</p>
-    <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}" class="bg-green-600 text-white text-x1 px-10 py-4 rounded-2xl font-semibold hover:bg-green-700">Start Your Chama Today</a>
+<div class="text-center py-12 sm:py-20 px-4">
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-green-700 mb-4 sm:mb-6 leading-tight">
+        Merry-Go-Round<br class="sm:hidden"> + Smart Savings
+    </h1>
+    <p class="text-lg sm:text-2xl text-gray-600 mb-8 sm:mb-10">Contribute • Rotate • Save • Share</p>
+    <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}"
+       class="inline-block bg-green-600 text-white text-base sm:text-xl px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-semibold hover:bg-green-700 transition">
+        Start Your Chama Today
+    </a>
 </div>
 {% endblock %}

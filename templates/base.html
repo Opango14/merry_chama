@@ -8,27 +8,65 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     </head>
     <body class="bg-gray-50 font-sans">
-        <nav class="bg-green-700 text-white p-4">
-            <div class="max-w-6xl mx-auto flex justify-between items-center">
-                <a href="/" class="text-2xl font-bold">ChamaFlow</a>
-                {% if user.is_authenticated %}
-                    <div class="flex items-center gap-6">
+
+        <!-- ── Navbar ── -->
+        <nav class="bg-green-700 text-white shadow-md">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+                <a href="/" class="text-xl sm:text-2xl font-bold tracking-tight">ChamaFlow</a>
+
+                <!-- Desktop links -->
+                <div class="hidden md:flex items-center gap-6">
+                    {% if user.is_authenticated %}
                         <a href="{% url 'dashboard' %}" class="hover:underline">Dashboard</a>
                         <a href="{% url 'create_group' %}" class="hover:underline">Create Chama</a>
-                        <span>{{ user.username }}</span>
-                        <a href="{% url 'logout' %}" class="bg-white text-green-700 px-4 py-1 rounded-full font-medium">Logout</a>
-                    </div>
+                        <span class="text-green-200 text-sm">{{ user.username }}</span>
+                        <a href="{% url 'logout' %}" class="bg-white text-green-700 px-4 py-1 rounded-full font-medium text-sm">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Login</a>
+                        <a href="{% url 'register' %}" class="bg-white text-green-700 px-5 py-2 rounded-full font-medium text-sm">Join Free</a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile hamburger -->
+                <button id="nav-toggle" class="md:hidden focus:outline-none" aria-label="Toggle menu">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile dropdown -->
+            <div id="nav-menu" class="hidden md:hidden bg-green-800 px-4 pb-4 space-y-3 text-sm">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="block py-2 hover:text-green-200">Dashboard</a>
+                    <a href="{% url 'create_group' %}" class="block py-2 hover:text-green-200">Create Chama</a>
+                    <span class="block py-1 text-green-300"> {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="block bg-white text-green-700 text-center py-2 rounded-xl font-medium">Logout</a>
                 {% else %}
-                    <div>
-                        <a href="{% url 'login' %}" class="mr-4">Login</a>
-                        <a href="{% url 'register' %}" class="bg-white text-green-700 px-6 py-2 rounded-full font-medium">Join Free</a>
-                    </div>
+                    <a href="{% url 'login' %}" class="block py-2 hover:text-green-200">Login</a>
+                    <a href="{% url 'register' %}" class="block bg-white text-green-700 text-center py-2 rounded-xl font-medium">Join Free</a>
                 {% endif %}
             </div>
         </nav>
 
-        <div class="max-w-6xl mx-auto p-6">
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            {% if messages %}
+                <div class="mb-4 space-y-2">
+                    {% for message in messages %}
+                        <div class="px-4 py-3 rounded-xl text-sm font-medium
+                            {% if message.tags == 'error' %}bg-red-100 text-red-700
+                            {% elif message.tags == 'success' %}bg-green-100 text-green-700
+                            {% else %}bg-blue-100 text-blue-700{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {% block content %}{% endblock %}
         </div>
+
+        <script>
+            const toggle = document.getElementById('nav-toggle');
+            const menu   = document.getElementById('nav-menu');
+            toggle.addEventListener('click', () => menu.classList.toggle('hidden'));
+        </script>
     </body>
 </html>
