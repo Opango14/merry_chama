@@ -8,7 +8,31 @@
         <form method="POST">
             {% csrf_token %}
             <div class="space-y-4 sm:space-y-6">
-                {{ form.as_p }}
+                <style>
+                    .auth-form p {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    }
+                    .auth-form label {
+                        white-space: nowrap;
+                        font-weight: 500;
+                    }
+                    .auth-form input {
+                        flex: 1;
+                        border: 1px solid #d1d5db;
+                        border-radius: 0.75rem;
+                        padding: 0.5rem 0.75rem;
+                    }
+                    .auth-form input:focus {
+                        border-color: #16a34a;
+                        outline: none;
+                        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+                    }
+                </style>
+                <div class="auth-form">
+                    {{ form.as_p }}
+                </div>
             </div>
             <button type="submit"
                 class="mt-6 sm:mt-8 w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 sm:py-4 rounded-2xl text-base sm:text-lg transition">
