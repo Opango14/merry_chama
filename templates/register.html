@@ -1,22 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-8 sm:mt-16 px-2">
-    <div class="bg-white shadow-2xl rounded-3xl p-6 sm:p-8">
-        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-green-700">Create Account</h2>
+<div class="max-w-xl mx-auto mt-8 sm:mt-16 px-2">
+    <div class="bg-white shadow-2xl rounded-3xl p-8 sm:p-10">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-green-700">Create Account</h2>
 
         <form method="POST">
             {% csrf_token %}
-            <div class="space-y-4 sm:space-y-6">
-                {{ form.as_p }}
+            <div class="space-y-5">
+                <style>
+                    .auth-form p {
+                        display: flex;
+                        align-items: center;
+                        gap: 0 1rem;
+                    }
+                    .auth-form label {
+                        min-width: 8rem;
+                        font-weight: 600;
+                        color: #374151;
+                        font-size: 0.95rem;
+                    }
+                    .auth-form input {
+                        flex: 1;
+                        border: 1px solid #d1d5db;
+                        border-radius: 0.75rem;
+                        padding: 0.65rem 0.85rem;
+                        font-size: 1rem;
+                        transition: border-color 0.2s, box-shadow 0.2s;
+                    }
+                    .auth-form input:focus {
+                        border-color: #16a34a;
+                        outline: none;
+                        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+                    }
+                    .auth-form .helptext {
+                        display: block;
+                        margin-left: 9rem;
+                        font-size: 0.8rem;
+                        color: #6b7280;
+                        margin-top: 0.15rem;
+                    }
+                    .auth-form .errorlist {
+                        margin: 0 0 0 9rem;
+                        list-style: none;
+                        padding: 0;
+                        font-size: 0.8rem;
+                        color: #dc2626;
+                    }
+                </style>
+                <div class="auth-form">
+                    {{ form.as_p }}
+                </div>
             </div>
             <button type="submit"
-                class="mt-6 sm:mt-8 w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 sm:py-4 rounded-2xl text-base sm:text-lg transition">
+                class="mt-7 w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3.5 sm:py-4 rounded-2xl text-base sm:text-lg transition">
                 Register
             </button>
         </form>
 
-        <p class="text-center mt-5 text-gray-600 text-sm sm:text-base">
+        <p class="text-center mt-6 text-gray-600 text-sm sm:text-base">
             Already have an account?
             <a href="{% url 'login' %}" class="text-green-700 font-medium">Login Here</a>
         </p>
