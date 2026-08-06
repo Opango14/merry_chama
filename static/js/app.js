@@ -4,6 +4,39 @@
  * Loaded globally in base.html (defer).
  */
 
+/* ── Theme toggle ───────────────────────────────────────────────────
+   Enables / disables theme.css (the dark stylesheet) and persists
+   the user's choice to localStorage. The FOUC prevention script in
+   base.html applies the saved preference before paint.
+────────────────────────────────────────────────────────────────── */
+window.cfToggleTheme = function () {
+    var link = document.getElementById('theme-stylesheet');
+    if (!link) return;
+
+    /* If the sheet is currently active (dark mode), disable it → light mode */
+    var goingLight = !link.disabled;
+    link.disabled = goingLight;
+    localStorage.setItem('cf-theme', goingLight ? 'light' : 'dark');
+
+    /* Swap icon: sun = "click to go light", moon = "click to go dark" */
+    var icon = goingLight ? 'fa-moon' : 'fa-sun';
+    document.querySelectorAll('[data-theme-icon]').forEach(function (el) {
+        el.classList.remove('fa-moon', 'fa-sun');
+        el.classList.add(icon);
+    });
+};
+
+/* Sync icon with saved theme on every page load */
+document.addEventListener('DOMContentLoaded', function () {
+    var link   = document.getElementById('theme-stylesheet');
+    var isDark = link && !link.disabled;            /* disabled = light mode */
+    var icon   = isDark ? 'fa-sun' : 'fa-moon';    /* sun while dark, moon while light */
+    document.querySelectorAll('[data-theme-icon]').forEach(function (el) {
+        el.classList.remove('fa-moon', 'fa-sun');
+        el.classList.add(icon);
+    });
+});
+
 /* ── cfToast — JS-triggered toast messages ──────────────────────── */
 window.cfToast = function (text, type, timeout) {
     type    = type    || 'info';

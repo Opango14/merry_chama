@@ -1,0 +1,386 @@
+/* ══════════════════════════════════════════════════════════════════
+   ChamaFlow — Dark Theme
+   Permanent dark palette overrides. Loaded last in base.html so
+   all component-level light colours are replaced without touching
+   individual component CSS files.
+════════════════════════════════════════════════════════════════════ */
+
+/* ── Dark palette tokens ────────────────────────────────────────── */
+:root {
+    --dk-page:      #0d1117;
+    --dk-surface:   #161b22;
+    --dk-elevated:  #1c2128;
+    --dk-overlay:   #21262d;
+    --dk-border:    #30363d;
+    --dk-border-sub:#21262d;
+    --dk-text:      #e6edf3;
+    --dk-text-sub:  #8b949e;
+    --dk-text-muted:#6e7681;
+}
+
+/* ── Smooth theme transition ────────────────────────────────────── */
+body, .cf-nav, .card, .dash-card, .gd-card,
+.auth-card, .cf-form-card, .modal,
+.auth-form input, .cf-form input, .cf-form select {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease !important;
+}
+
+/* ── Theme toggle button ────────────────────────────────────────── */
+.cf-nav__theme-toggle {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--dk-text-sub);
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    padding: 0;
+    font-family: inherit;
+}
+.cf-nav__theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--dk-border);
+    color: var(--dk-text);
+}
+/* Mobile variant styles come from cf-nav__mobile-link, just adjust sizing */
+.cf-nav__mobile-link.cf-nav__theme-toggle {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    justify-content: flex-start;
+    font-size: 0.9rem;
+    font-weight: 500;
+    gap: 0.6rem;
+    padding: 0.65rem 0.75rem;
+    color: var(--dk-text-sub) !important;
+}
+.cf-nav__mobile-link.cf-nav__theme-toggle:hover {
+    background: rgba(34, 197, 94, 0.08) !important;
+    color: var(--clr-brand-400) !important;
+}
+.theme-toggle-label { line-height: 1; }
+
+/* ── Global base ────────────────────────────────────────────────── */
+html,
+body {
+    background-color: var(--dk-page) !important;
+    color: var(--dk-text) !important;
+}
+
+/* Override Tailwind bg class on <body> */
+.bg-\[#f8fafc\] { background-color: var(--dk-page) !important; }
+
+/* Update design-system token so var(--clr-neutral-*) referencing
+   components like dash-card__name and auth-form-title pick up dark text */
+:root {
+    --clr-neutral-50:  var(--dk-overlay);
+    --clr-neutral-100: var(--dk-elevated);
+    --clr-neutral-200: var(--dk-border);
+    --clr-neutral-300: #444d57;
+    --clr-neutral-400: var(--dk-text-muted);
+    --clr-neutral-500: var(--dk-text-sub);
+    --clr-neutral-600: #adbac7;
+    --clr-neutral-700: #cdd9e5;
+    --clr-neutral-800: var(--dk-text);
+    --clr-neutral-900: #f0f6fc;
+    --surface:         var(--dk-surface);
+    --surface-muted:   var(--dk-page);
+    --border:          var(--dk-border);
+}
+
+/* ── Navbar ─────────────────────────────────────────────────────── */
+.cf-nav {
+    background: color-mix(in srgb, var(--dk-surface) 90%, transparent) !important;
+    border-bottom-color: var(--dk-border) !important;
+    box-shadow: 0 1px 0 var(--dk-border) !important;
+}
+
+.cf-nav__logo { color: #f0f6fc !important; }
+.cf-nav__link { color: var(--dk-text-sub) !important; }
+.cf-nav__link:hover {
+    color: var(--clr-brand-400) !important;
+    background: rgba(34, 197, 94, 0.08) !important;
+}
+.cf-nav__link--active {
+    color: var(--clr-brand-400) !important;
+    background: rgba(34, 197, 94, 0.10) !important;
+}
+.cf-nav__link--active::after { background: var(--clr-brand-400) !important; }
+.cf-nav__link:hover::after   { background: var(--clr-brand-400) !important; }
+
+.cf-nav__user {
+    background: var(--dk-elevated) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--dk-text) !important;
+}
+.cf-nav__logout {
+    color: var(--dk-text-sub) !important;
+    border-color: var(--dk-border) !important;
+}
+.cf-nav__logout:hover {
+    background: rgba(220, 38, 38, 0.12) !important;
+    border-color: rgba(220, 38, 38, 0.30) !important;
+    color: #f87171 !important;
+}
+.cf-nav__login { color: var(--dk-text-sub) !important; }
+.cf-nav__login:hover {
+    background: rgba(34, 197, 94, 0.08) !important;
+    color: var(--clr-brand-400) !important;
+}
+.cf-nav__burger-bar { background: var(--dk-text-sub) !important; }
+.cf-nav__burger:hover { background: var(--dk-elevated) !important; }
+
+/* Mobile menu */
+.cf-nav__mobile { background: var(--dk-surface) !important; }
+.cf-nav__mobile.is-open { border-top-color: var(--dk-border) !important; }
+.cf-nav__mobile-link { color: var(--dk-text-sub) !important; }
+.cf-nav__mobile-link:hover {
+    color: var(--clr-brand-400) !important;
+    background: rgba(34, 197, 94, 0.08) !important;
+}
+.cf-nav__mobile-divider { background: var(--dk-border) !important; }
+.cf-nav__mobile-user { color: var(--dk-text-muted) !important; }
+.cf-nav__mobile-logout {
+    background: rgba(220, 38, 38, 0.08) !important;
+    border-color: rgba(220, 38, 38, 0.25) !important;
+    color: #f87171 !important;
+}
+
+/* ── Cards (generic .card) ──────────────────────────────────────── */
+.card {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+}
+
+/* ── Dashboard ──────────────────────────────────────────────────── */
+.dash-card {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+}
+.dash-card__stats {
+    background: var(--dk-overlay) !important;
+}
+.dash-empty {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+}
+.dash-empty__title { color: var(--dk-text) !important; }
+.dash-empty__sub   { color: var(--dk-text-sub) !important; }
+.dash-welcome      { color: var(--dk-text) !important; }
+
+.dash-card__cta {
+    background: rgba(34, 197, 94, 0.08) !important;
+    border-color: rgba(34, 197, 94, 0.20) !important;
+    color: var(--clr-brand-400) !important;
+}
+.dash-card__cta:hover {
+    background: rgba(34, 197, 94, 0.14) !important;
+    border-color: rgba(34, 197, 94, 0.35) !important;
+    color: var(--clr-brand-300) !important;
+}
+
+/* ── Group detail ────────────────────────────────────────────────── */
+.gd-card {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+}
+.gd-info-card--blue {
+    background: rgba(37, 99, 235, 0.08) !important;
+    border-color: rgba(37, 99, 235, 0.20) !important;
+}
+.gd-info-card--green {
+    background: rgba(21, 128, 61, 0.08) !important;
+    border-color: rgba(21, 128, 61, 0.20) !important;
+}
+.gd-table-wrap {
+    border-color: var(--dk-border) !important;
+}
+.gd-table thead { background: var(--dk-elevated) !important; }
+.gd-table th { color: var(--dk-text-sub) !important; border-bottom-color: var(--dk-border) !important; }
+.gd-table td { border-bottom-color: var(--dk-border-sub) !important; }
+.gd-table tr:hover td { background: var(--dk-overlay) !important; }
+
+.gd-invite {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+}
+.gd-rate-input {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--dk-text) !important;
+}
+.gd-rate-input:focus { border-color: var(--clr-brand-600) !important; }
+.gd-admin-note { color: var(--dk-text-muted) !important; }
+
+/* ── Auth card ───────────────────────────────────────────────────── */
+.auth-card {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+    box-shadow: 0 8px 40px -8px rgb(0 0 0 / 0.50) !important;
+}
+.auth-form-panel { background: var(--dk-surface) !important; }
+.auth-form-title { color: var(--dk-text) !important; }
+
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"],
+.auth-form input[type="number"],
+.auth-form select {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--dk-text) !important;
+}
+.auth-form input[type="text"]::placeholder,
+.auth-form input[type="password"]::placeholder,
+.auth-form input[type="email"]::placeholder {
+    color: var(--dk-text-muted) !important;
+}
+.auth-form input:hover,
+.auth-form select:hover { border-color: #444d57 !important; }
+.auth-form input:focus,
+.auth-form select:focus {
+    background: var(--dk-elevated) !important;
+    border-color: var(--clr-brand-600) !important;
+}
+
+/* ── Create/Join forms ───────────────────────────────────────────── */
+.cf-form-card {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+    box-shadow: 0 4px 24px -4px rgb(0 0 0 / 0.40) !important;
+}
+.cf-form-title { color: var(--dk-text) !important; }
+.cf-form-sub   { color: var(--dk-text-sub) !important; }
+.cf-form-icon  {
+    background: rgba(34, 197, 94, 0.10) !important;
+    border-color: rgba(34, 197, 94, 0.20) !important;
+}
+
+.cf-form input[type="text"],
+.cf-form input[type="number"],
+.cf-form input[type="email"],
+.cf-form select {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--dk-text) !important;
+}
+.cf-form input::placeholder { color: var(--dk-text-muted) !important; }
+.cf-form input:hover,
+.cf-form select:hover { border-color: #444d57 !important; }
+.cf-form input:focus,
+.cf-form select:focus {
+    background: var(--dk-elevated) !important;
+    border-color: var(--clr-brand-600) !important;
+}
+
+.cf-code-input {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--dk-text) !important;
+}
+.cf-code-input::placeholder { color: var(--dk-text-muted) !important; }
+.cf-code-input:focus {
+    background: var(--dk-elevated) !important;
+    border-color: var(--clr-brand-600) !important;
+}
+
+.cf-tip {
+    background: rgba(34, 197, 94, 0.06) !important;
+    border-color: rgba(34, 197, 94, 0.15) !important;
+    color: var(--clr-brand-300) !important;
+}
+
+/* ── Modals ─────────────────────────────────────────────────────── */
+.modal {
+    background: var(--dk-surface) !important;
+    border-color: var(--dk-border) !important;
+}
+.modal__title   { color: var(--dk-text) !important; }
+.modal__message { color: var(--dk-text-sub) !important; }
+.modal__detail  {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+}
+.modal__detail-label { color: var(--dk-text-muted) !important; }
+.modal__detail-value { color: var(--dk-text) !important; }
+.modal__cancel {
+    background: var(--dk-overlay) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--dk-text-sub) !important;
+}
+.modal__cancel:hover {
+    background: var(--dk-elevated) !important;
+    border-color: #444d57 !important;
+    color: var(--dk-text) !important;
+}
+.modal__close {
+    background: var(--dk-overlay) !important;
+    color: var(--dk-text-sub) !important;
+}
+.modal__close:hover {
+    background: var(--dk-border) !important;
+    color: var(--dk-text) !important;
+}
+.modal-backdrop {
+    background: rgba(1, 4, 9, 0.75) !important;
+}
+
+/* ── Buttons (secondary + ghost on dark) ────────────────────────── */
+.btn-secondary {
+    background: var(--dk-elevated) !important;
+    border-color: var(--dk-border) !important;
+    color: var(--clr-brand-400) !important;
+}
+.btn-secondary:hover {
+    background: var(--dk-overlay) !important;
+    border-color: rgba(34, 197, 94, 0.30) !important;
+}
+.btn-ghost { color: var(--dk-text-sub) !important; }
+.btn-ghost:hover {
+    background: var(--dk-elevated) !important;
+    color: var(--dk-text) !important;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────── */
+.badge-green {
+    background: rgba(34, 197, 94, 0.12) !important;
+    color: var(--clr-brand-400) !important;
+}
+.badge-blue  { background: rgba(37, 99, 235, 0.12) !important; color: #60a5fa !important; }
+.badge-amber { background: rgba(217, 119, 6, 0.12)  !important; color: #fbbf24 !important; }
+.badge-red   { background: rgba(220, 38, 38, 0.12)  !important; color: #f87171 !important; }
+.badge-gray  { background: var(--dk-overlay) !important;         color: var(--dk-text-sub) !important; border-color: var(--dk-border) !important; }
+
+/* ── Toasts ─────────────────────────────────────────────────────── */
+.toast {
+    background: var(--dk-elevated) !important;
+    border-color: var(--dk-border) !important;
+}
+.toast-success { border-left-color: var(--clr-brand-500) !important; color: var(--clr-brand-300) !important; background: rgba(21, 128, 61, 0.10) !important; }
+.toast-error   { border-left-color: #f87171 !important; color: #fca5a5 !important; background: rgba(220, 38, 38, 0.10) !important; }
+.toast-info    { border-left-color: #60a5fa !important; color: #93c5fd !important; background: rgba(37, 99, 235, 0.10) !important; }
+
+/* ── Home page sections ─────────────────────────────────────────── */
+/* How-it-works step numbers */
+.text-center > div[style*="background: var(--clr-brand-600)"] {
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+}
+/* Feature card heading text */
+.card-spotlight h3 { color: var(--dk-text) !important; }
+.card-spotlight p  { color: var(--dk-text-sub) !important; }
+
+/* ── Page wrapper max-w content area ────────────────────────────── */
+/* Ensure no white leaks through Tailwind bg utilities */
+[class*="bg-white"],
+[style*="background: #fff"],
+[style*="background:#fff"],
+[style*="background-color: white"],
+[style*="background-color: #fff"] {
+    background: var(--dk-surface) !important;
+}

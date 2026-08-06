@@ -65,6 +65,17 @@
         <!-- ── Animations CSS ── -->
         <link rel="stylesheet" href="{% static 'css/animations.css' %}">
 
+        <!-- ── Dark theme (loads last — overrides all surfaces) ── -->
+        <link id="theme-stylesheet" rel="stylesheet" href="{% static 'css/theme.css' %}">
+        <!-- Restore user's saved preference before paint (prevents FOUC) -->
+        <script>
+            (function () {
+                if (localStorage.getItem('cf-theme') === 'light') {
+                    document.getElementById('theme-stylesheet').disabled = true;
+                }
+            }());
+        </script>
+
         <!-- ── GSAP + ScrollTrigger ── -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -113,6 +124,14 @@
 
                 <!-- Desktop right controls -->
                 <div class="cf-nav__right">
+                    <!-- Theme toggle -->
+                    <button type="button"
+                            id="theme-toggle-btn"
+                            onclick="cfToggleTheme()"
+                            aria-label="Toggle light / dark theme"
+                            class="cf-nav__theme-toggle focus-ring">
+                        <i class="fa-solid fa-sun" data-theme-icon aria-hidden="true"></i>
+                    </button>
                     {% if user.is_authenticated %}
                         <span class="cf-nav__user">
                             <span class="cf-nav__avatar" aria-hidden="true">
@@ -157,11 +176,28 @@
                             <i class="fas fa-plus fa-fw" aria-hidden="true"></i> Create Chama
                         </a>
                         <div class="cf-nav__mobile-divider"></div>
+                        <button type="button"
+                                onclick="cfToggleTheme()"
+                                class="cf-nav__mobile-link cf-nav__theme-toggle"
+                                style="width:100%;border:none;background:none;cursor:pointer;text-align:left;"
+                                aria-label="Toggle light / dark theme">
+                            <i class="fa-solid fa-sun fa-fw" data-theme-icon aria-hidden="true"></i>
+                            <span class="theme-toggle-label">Switch theme</span>
+                        </button>
+                        <div class="cf-nav__mobile-divider"></div>
                         <a href="{% url 'logout' %}" class="cf-nav__mobile-logout" role="menuitem">Logout</a>
                     {% else %}
                         <a href="{% url 'login' %}" class="cf-nav__mobile-link" role="menuitem">
                             <i class="fas fa-arrow-right-to-bracket fa-fw" aria-hidden="true"></i> Login
                         </a>
+                        <button type="button"
+                                onclick="cfToggleTheme()"
+                                class="cf-nav__mobile-link cf-nav__theme-toggle"
+                                style="width:100%;border:none;background:none;cursor:pointer;text-align:left;"
+                                aria-label="Toggle light / dark theme">
+                            <i class="fa-solid fa-sun fa-fw" data-theme-icon aria-hidden="true"></i>
+                            <span class="theme-toggle-label">Switch theme</span>
+                        </button>
                         <a href="{% url 'register' %}" class="cf-nav__mobile-cta" role="menuitem">Join Free</a>
                     {% endif %}
                 </div>
