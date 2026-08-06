@@ -1,0 +1,189 @@
+/* ══════════════════════════════════════════════════════════════════
+   ChamaFlow — Responsive / Mobile
+   Phase 8: Global mobile fixes loaded after all other CSS files.
+   Applied to all pages via base.html.
+════════════════════════════════════════════════════════════════════ */
+
+/* ── Touch targets — WCAG 2.5.5: min 44×44px ───────────────────── */
+.btn,
+.cf-submit,
+.auth-submit,
+.modal__confirm,
+.modal__cancel,
+.modal__close,
+.cf-nav__burger,
+.dash-card__cta,
+.gd-btn-blue,
+.gd-btn-green {
+    min-height: 44px;
+}
+
+/* Inline-flex links that act as buttons */
+.cf-back-link,
+.auth-footer-link a,
+.cf-nav__cta,
+.cf-nav__login,
+.cf-nav__logout {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* ── Page wrapper: tighter on phones ───────────────────────────── */
+@media (max-width: 479px) {
+    /* Reduce horizontal padding so content isn't squeezed */
+    .max-w-6xl.mx-auto.px-4 { padding-left: 0.875rem; padding-right: 0.875rem; }
+
+    /* Tighter vertical rhythm */
+    .max-w-6xl.mx-auto.py-6  { padding-top: 1rem; padding-bottom: 1rem; }
+}
+
+/* ── Navbar: tighter on very small screens ──────────────────────── */
+@media (max-width: 359px) {
+    .cf-nav__inner { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .cf-nav__logo  { font-size: 1rem; }
+}
+
+/* ── Auth pages ─────────────────────────────────────────────────── */
+
+/* On tiny screens: go full-bleed, remove rounded corners */
+@media (max-width: 479px) {
+    .auth-page {
+        padding: 0;
+        min-height: calc(100vh - 60px);
+        align-items: flex-start;
+    }
+    .auth-card {
+        border-radius: 0;
+        box-shadow: none;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+    }
+    .auth-form-panel { padding: 1.5rem 1.25rem 2rem; }
+}
+
+/* On phones: increase input/submit height for touch */
+@media (max-width: 639px) {
+    .auth-form input[type="text"],
+    .auth-form input[type="password"],
+    .auth-form input[type="email"] {
+        padding: 0.75rem 0.875rem;
+        font-size: 1rem; /* Prevents iOS zoom on focus (<16px triggers it) */
+    }
+    .auth-submit { padding: 0.875rem; font-size: 1rem; }
+}
+
+/* ── Forms (create_group, join_group) ───────────────────────────── */
+@media (max-width: 479px) {
+    .cf-form-page { padding: 0; }
+    .cf-form-card { border-radius: 0; box-shadow: none; border-left: none; border-right: none; }
+    .cf-form-card__body { padding: 1.5rem 1.25rem 2rem; }
+}
+
+/* Prevent iOS zoom on inputs (font must be ≥16px) */
+@media (max-width: 767px) {
+    .cf-form input[type="text"],
+    .cf-form input[type="number"],
+    .cf-form input[type="email"],
+    .cf-form select,
+    .cf-code-input,
+    .gd-contrib-form select,
+    .gd-contrib-form input[type="number"],
+    .gd-rate-input {
+        font-size: 1rem;
+    }
+    .cf-submit { padding: 0.875rem; font-size: 1rem; }
+}
+
+/* ── Dashboard ──────────────────────────────────────────────────── */
+@media (max-width: 479px) {
+    .dash-welcome { font-size: 1.5rem; }
+    .dash-actions__btns .btn { width: 100%; justify-content: center; }
+    .dash-empty { padding: 2.5rem 1.25rem; }
+    .dash-card__stats { gap: 0.35rem; padding: 0.75rem; }
+    .dash-card__stat-label { font-size: 0.62rem; }
+    .dash-card__stat-value { font-size: 0.82rem; }
+}
+
+/* ── Group Detail ────────────────────────────────────────────────── */
+
+/* Stack right column below members list on all small screens */
+@media (max-width: 767px) {
+    .gd-grid { grid-template-columns: 1fr; }
+
+    .gd-header { flex-direction: column; }
+    .gd-invite { align-self: flex-start; }
+
+    /* Info card amounts: smaller on phones */
+    .gd-info-card__amount--blue,
+    .gd-info-card__amount--green { font-size: 1.4rem; }
+
+    /* Contribution form: always stacked on phones */
+    .gd-contrib-form { flex-direction: column; }
+    .gd-contrib-form select,
+    .gd-contrib-form input[type="number"] { width: 100%; }
+
+    /* Download button: full width on mobile */
+    .gd-download-row { justify-content: stretch; }
+    .gd-download-row .btn { width: 100%; justify-content: center; }
+}
+
+/* Table: iOS touch scroll */
+.gd-table-wrap {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+}
+
+@media (max-width: 479px) {
+    /* Tighter table cell padding on phones */
+    .gd-table th { padding: 0.6rem 0.75rem; }
+    .gd-table td { padding: 0.75rem 0.75rem; }
+    .gd-table__avatar { display: none; } /* hide avatar on tiny screens */
+}
+
+/* ── Modals ─────────────────────────────────────────────────────── */
+@media (max-width: 479px) {
+    /* Full-width modal on tiny screens */
+    .modal-backdrop { padding: 0; align-items: flex-end; }
+    .modal {
+        max-width: 100%;
+        border-radius: var(--radius-3xl) var(--radius-3xl) 0 0; /* bottom sheet */
+    }
+    .modal__body { padding: 1.25rem 1.25rem 0; }
+    .modal__footer { padding: 1rem 1.25rem 1.5rem; flex-direction: column; }
+    .modal__cancel,
+    .modal__confirm { width: 100%; text-align: center; justify-content: center; }
+    /* Confirm first (more prominent) */
+    .modal__footer { flex-direction: column-reverse; }
+}
+
+/* ── Flash messages / toasts ────────────────────────────────────── */
+@media (max-width: 479px) {
+    .toast { font-size: 0.82rem; padding: 0.75rem 0.875rem; }
+}
+
+/* ── Home page hero ─────────────────────────────────────────────── */
+@media (max-width: 479px) {
+    #hero-heading { font-size: 2rem; }
+    #hero-tagline  { font-size: 1rem; }
+    #hero-cta      { padding: 0.875rem 1.75rem; font-size: 1rem; }
+}
+
+/* ── Utility: prevent long text overflow ────────────────────────── */
+.gd-group-name,
+.dash-card__name,
+.auth-form-title,
+.cf-form-title,
+.modal__title {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* ── Scrollbar styling (WebKit) — subtle for overflow tables ────── */
+.gd-table-wrap::-webkit-scrollbar { height: 4px; }
+.gd-table-wrap::-webkit-scrollbar-track { background: var(--clr-neutral-100); }
+.gd-table-wrap::-webkit-scrollbar-thumb {
+    background: var(--clr-neutral-300);
+    border-radius: 9999px;
+}
