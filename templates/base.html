@@ -78,6 +78,9 @@
         <!-- ── Animations JS (scroll-reveal + counters) ── -->
         <script src="{% static 'js/animations.js' %}" defer></script>
 
+        <!-- ── App utilities (cfToast, cfCopy, cfTableSearch, spotlight, loading state) ── -->
+        <script src="{% static 'js/app.js' %}" defer></script>
+
         {% block extra_head %}{% endblock %}
     </head>
     <body class="bg-[#f8fafc] font-sans">
@@ -97,8 +100,12 @@
                 <!-- Desktop nav links -->
                 <ul class="cf-nav__links" role="list">
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'dashboard' %}" class="cf-nav__link">Dashboard</a></li>
-                        <li><a href="{% url 'create_group' %}" class="cf-nav__link">Create Chama</a></li>
+                        <li><a href="{% url 'dashboard' %}"
+                               class="cf-nav__link {% if request.resolver_match.url_name == 'dashboard' %}cf-nav__link--active{% endif %}">Dashboard</a></li>
+                        <li><a href="{% url 'join_group' %}"
+                               class="cf-nav__link {% if request.resolver_match.url_name == 'join_group' %}cf-nav__link--active{% endif %}">Join Chama</a></li>
+                        <li><a href="{% url 'create_group' %}"
+                               class="cf-nav__link {% if request.resolver_match.url_name == 'create_group' %}cf-nav__link--active{% endif %}">Create Chama</a></li>
                     {% else %}
                         <li><a href="{% url 'login' %}" class="cf-nav__login">Login</a></li>
                     {% endif %}
@@ -143,6 +150,9 @@
                         <a href="{% url 'dashboard' %}" class="cf-nav__mobile-link" role="menuitem">
                             <i class="fas fa-grid-2 fa-fw" aria-hidden="true"></i> Dashboard
                         </a>
+                        <a href="{% url 'join_group' %}" class="cf-nav__mobile-link" role="menuitem">
+                            <i class="fas fa-right-to-bracket fa-fw" aria-hidden="true"></i> Join Chama
+                        </a>
                         <a href="{% url 'create_group' %}" class="cf-nav__mobile-link" role="menuitem">
                             <i class="fas fa-plus fa-fw" aria-hidden="true"></i> Create Chama
                         </a>
@@ -184,6 +194,9 @@
         </div>
 
         <!-- Hamburger toggle handled by static/js/navbar.js -->
+
+        <!-- ── JS toast region (for cfToast() calls) ── -->
+        <div id="toast-region" aria-live="polite" aria-atomic="false"></div>
 
         {% block extra_scripts %}{% endblock %}
     </body>
