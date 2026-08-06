@@ -16,11 +16,15 @@
     </p>
 
     <!-- CTA — hidden initially by GSAP, slides up after tagline finishes -->
-    <a id="hero-cta"
-       href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}"
-       class="inline-block bg-green-600 text-white text-base sm:text-xl px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-semibold hover:bg-green-700 transition">
-        Start Your Chama Today
-    </a>
+    <!-- Magnet wrapper: the outer span is the detection zone, the inner anchor moves -->
+    <span id="magnet-wrapper" style="display:inline-block; position:relative;">
+        <a id="hero-cta"
+           href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}"
+           style="display:inline-block; will-change:transform;"
+           class="bg-green-600 text-white text-base sm:text-xl px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-semibold hover:bg-green-700 transition">
+            Start Your Chama Today
+        </a>
+    </span>
 </div>
 {% endblock %}
 
@@ -75,5 +79,49 @@ document.fonts.ready.then(() => {
         }
     });
 });
+
+/* ── Magnet effect for the CTA button ───────────────────────────────────
+   Mirrors the React Bits <Magnet /> component props:
+     padding        = 60   (px zone around the button that activates pull)
+     magnetStrength = 4    (higher = less movement)
+     activeTransition   = 'transform 0.3s ease-out'
+     inactiveTransition = 'transform 0.5s ease-in-out'
+─────────────────────────────────────────────────────────────────────── */
+(function () {
+    const PADDING        = 60;
+    const STRENGTH       = 4;
+    const ACTIVE_TR      = 'transform 0.3s ease-out';
+    const INACTIVE_TR    = 'transform 0.5s ease-in-out';
+
+    const wrapper = document.getElementById('magnet-wrapper');
+    const inner   = document.getElementById('hero-cta');
+    if (!wrapper || !inner) return;
+
+    let active = false;
+
+    window.addEventListener('mousemove', function (e) {
+        const rect    = wrapper.getBoundingClientRect();
+        const centerX = rect.left + rect.width  / 2;
+        const centerY = rect.top  + rect.height / 2;
+        const distX   = Math.abs(centerX - e.clientX);
+        const distY   = Math.abs(centerY - e.clientY);
+
+        if (distX < rect.width / 2 + PADDING && distY < rect.height / 2 + PADDING) {
+            if (!active) {
+                active = true;
+                inner.style.transition = ACTIVE_TR;
+            }
+            const offsetX = (e.clientX - centerX) / STRENGTH;
+            const offsetY = (e.clientY - centerY) / STRENGTH;
+            inner.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0)`;
+        } else {
+            if (active) {
+                active = false;
+                inner.style.transition = INACTIVE_TR;
+                inner.style.transform  = 'translate3d(0, 0, 0)';
+            }
+        }
+    });
+}());
 </script>
 {% endblock %}
