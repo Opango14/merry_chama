@@ -1,0 +1,295 @@
+/* ══════════════════════════════════════════════════════════════════
+   ChamaFlow — Form Pages
+   Phase 6: Create Chama + Join Chama form styles.
+   Loaded per-page via {% block extra_head %} + {% static 'css/forms.css' %}
+════════════════════════════════════════════════════════════════════ */
+
+/* ── Centering wrapper ──────────────────────────────────────────── */
+.cf-form-page {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 1.5rem 0 2.5rem;
+}
+
+/* ── Card ───────────────────────────────────────────────────────── */
+.cf-form-card {
+    background: #fff;
+    border: 1px solid var(--clr-neutral-100);
+    border-radius: var(--radius-3xl);
+    box-shadow: 0 4px 24px -4px rgb(0 0 0 / 0.09), 0 1px 4px -1px rgb(0 0 0 / 0.06);
+    overflow: hidden;
+}
+
+.cf-form-card__stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--clr-brand-600), var(--clr-brand-400));
+}
+
+.cf-form-card__body {
+    padding: 2rem 1.75rem 2.25rem;
+}
+
+@media (min-width: 480px) {
+    .cf-form-card__body { padding: 2.25rem 2.25rem 2.5rem; }
+}
+
+/* ── Card header ────────────────────────────────────────────────── */
+.cf-form-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.cf-form-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: var(--clr-brand-50);
+    border: 1.5px solid var(--clr-brand-100);
+    border-radius: var(--radius-xl);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clr-brand-700);
+    font-size: 1.05rem;
+}
+
+.cf-form-header__text { flex: 1; }
+
+.cf-form-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--clr-neutral-900);
+    letter-spacing: -0.02em;
+    margin: 0 0 0.25rem;
+    line-height: 1.2;
+}
+
+.cf-form-sub {
+    font-size: 0.85rem;
+    color: var(--clr-neutral-500);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── Form layout ────────────────────────────────────────────────── */
+.cf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+/* ── Field wrapper ──────────────────────────────────────────────── */
+.cf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.cf-field--error input,
+.cf-field--error select {
+    border-color: var(--clr-error-bdr) !important;
+    background: var(--clr-error-bg) !important;
+}
+.cf-field--error input:focus,
+.cf-field--error select:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+}
+
+/* ── Label ──────────────────────────────────────────────────────── */
+.cf-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-neutral-700);
+    letter-spacing: 0.01em;
+}
+
+/* ── Input & select — style Django widgets by type within .cf-form */
+.cf-form input[type="text"],
+.cf-form input[type="number"],
+.cf-form input[type="email"],
+.cf-form select {
+    display: block;
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: var(--clr-neutral-800);
+    background: var(--clr-neutral-50);
+    border: 1.5px solid var(--clr-neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 0.65rem 0.875rem;
+    outline: none;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.cf-form input[type="text"]::placeholder,
+.cf-form input[type="number"]::placeholder {
+    color: var(--clr-neutral-400);
+}
+.cf-form input:hover,
+.cf-form select:hover { border-color: var(--clr-neutral-300); }
+
+.cf-form input:focus,
+.cf-form select:focus {
+    border-color: var(--clr-brand-600);
+    box-shadow: var(--shadow-input);
+    background: #fff;
+}
+
+/* Select caret */
+.cf-select-wrap {
+    position: relative;
+}
+.cf-select-wrap::after {
+    content: '\f107'; /* fa-chevron-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.75rem;
+    color: var(--clr-neutral-400);
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+.cf-select-wrap select { padding-right: 2.25rem; }
+
+/* ── Errors ─────────────────────────────────────────────────────── */
+.cf-errors {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.cf-errors li {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--clr-error-txt);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.cf-errors li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ── Help text ──────────────────────────────────────────────────── */
+.cf-help,
+.cf-help p,
+.cf-help ul {
+    font-size: 0.75rem;
+    color: var(--clr-neutral-400);
+    line-height: 1.5;
+    margin: 0;
+}
+.cf-help ul { list-style: none; padding: 0; }
+.cf-help li + li { margin-top: 0.1rem; }
+
+/* ── Submit button ──────────────────────────────────────────────── */
+.cf-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--clr-brand-700);
+    border: none;
+    border-radius: var(--radius-2xl);
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition:
+        background var(--transition-base),
+        box-shadow var(--transition-base),
+        transform var(--transition-base);
+}
+.cf-submit:hover {
+    background: var(--clr-brand-800);
+    box-shadow: 0 4px 16px -4px rgba(21, 128, 61, 0.40);
+}
+.cf-submit:active { transform: scale(0.985); }
+
+/* ── Tip / footer note ──────────────────────────────────────────── */
+.cf-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.875rem 1rem;
+    background: var(--clr-brand-50);
+    border: 1px solid var(--clr-brand-100);
+    border-radius: var(--radius-xl);
+    font-size: 0.8rem;
+    color: var(--clr-brand-800);
+    line-height: 1.5;
+}
+.cf-tip i { flex-shrink: 0; margin-top: 2px; color: var(--clr-brand-600); }
+
+/* ── Back link ──────────────────────────────────────────────────── */
+.cf-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clr-neutral-500);
+    text-decoration: none;
+    margin-top: 1.25rem;
+    transition: color var(--transition-base);
+}
+.cf-back-link:hover { color: var(--clr-brand-700); }
+
+/* ── Join code input (special) ──────────────────────────────────── */
+.cf-code-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+    text-align: center;
+    margin: 0.5rem 0 0.25rem;
+}
+
+.cf-code-input {
+    display: block;
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--clr-neutral-900);
+    background: var(--clr-neutral-50);
+    border: 2px solid var(--clr-neutral-200);
+    border-radius: var(--radius-xl);
+    padding: 0.875rem 1rem;
+    outline: none;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
+    box-sizing: border-box;
+}
+.cf-code-input::placeholder {
+    color: var(--clr-neutral-300);
+    letter-spacing: 0.15em;
+}
+.cf-code-input:focus {
+    border-color: var(--clr-brand-600);
+    box-shadow: var(--shadow-input);
+    background: #fff;
+}
+
+.cf-code-hint {
+    font-size: 0.78rem;
+    color: var(--clr-neutral-400);
+    text-align: center;
+}

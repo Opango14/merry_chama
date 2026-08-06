@@ -1,64 +1,81 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-8 sm:mt-16 px-4">
-    <div class="bg-white shadow-2xl rounded-3xl p-8 sm:p-10">
-        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-3 text-green-700">Join a Chama</h2>
-        <p class="text-gray-500 text-center mb-8 text-sm">
-            Enter the 8-character join code provided by your group organizer.
-        </p>
+<div class="cf-form-page">
+    <div class="cf-form-card">
+        <div class="cf-form-card__stripe" aria-hidden="true"></div>
+        <div class="cf-form-card__body">
 
-        <form method="POST" action="{% url 'join_group' %}" class="space-y-5">
-            {% csrf_token %}
-
-            <div>
-                <label for="join_code" class="block text-sm font-semibold text-gray-700 mb-1">
-                    Join Code
-                </label>
-                <input type="text" name="join_code" id="join_code"
-                       placeholder="e.g. ABC123YZ"
-                       required maxlength="8"
-                       style="text-transform: uppercase;"
-                       class="join-input">
+            <!-- Card header -->
+            <div class="cf-form-header">
+                <span class="cf-form-icon" aria-hidden="true">
+                    <i class="fas fa-right-to-bracket"></i>
+                </span>
+                <div class="cf-form-header__text">
+                    <h1 class="cf-form-title">Join a Chama</h1>
+                    <p class="cf-form-sub">Enter the 8-character code your group admin shared with you.</p>
+                </div>
             </div>
 
-            <button type="submit"
-                class="mt-4 w-full bg-green-700 hover:bg-green-800 active:bg-green-900
-                       text-white font-semibold py-3.5 rounded-2xl text-base sm:text-lg
-                       transition duration-200 shadow-md hover:shadow-lg">
-                Join Chama
-            </button>
+            <!-- Form -->
+            <form method="POST" action="{% url 'join_group' %}" class="cf-form" novalidate>
+                {% csrf_token %}
 
-            <div class="text-center">
-                <a href="{% url 'dashboard' %}" class="text-sm font-medium text-green-700 hover:underline">
-                    ← Back to Dashboard
-                </a>
+                <div class="cf-code-field">
+                    <label for="join_code" class="cf-label">Join Code</label>
+                    <input type="text"
+                           name="join_code"
+                           id="join_code"
+                           class="cf-code-input"
+                           placeholder="ABC123YZ"
+                           required
+                           maxlength="8"
+                           autocomplete="off"
+                           spellcheck="false"
+                           aria-describedby="join-code-hint">
+                    <p class="cf-code-hint" id="join-code-hint">
+                        8 characters — letters and numbers
+                    </p>
+                </div>
+
+                <button type="submit" class="cf-submit">
+                    <i class="fas fa-right-to-bracket" aria-hidden="true"></i>
+                    Join Chama
+                </button>
+            </form>
+
+            <!-- Tip -->
+            <div class="cf-tip">
+                <i class="fas fa-circle-info" aria-hidden="true"></i>
+                <span>Don't have a code? Ask your group organizer to share it from the group detail page.</span>
             </div>
-        </form>
+
+            <!-- Back link -->
+            <a href="{% url 'dashboard' %}" class="cf-back-link">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                Back to Dashboard
+            </a>
+
+        </div>
     </div>
 </div>
+{% endblock %}
 
-<style>
-    .join-input {
-        display: block;
-        width: 100%;
-        border: 1.5px solid #d1d5db;
-        border-radius: 0.75rem;
-        padding: 0.65rem 0.85rem;
-        font-size: 1.125rem;
-        letter-spacing: 0.2em;
-        font-family: monospace;
-        text-align: center;
-        color: #111827;
-        background: #f9fafb;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        box-sizing: border-box;
+{% block extra_scripts %}
+<script>
+    /* Auto-uppercase the join code as the user types */
+    const codeInput = document.getElementById('join_code');
+    if (codeInput) {
+        codeInput.addEventListener('input', function () {
+            const pos = this.selectionStart;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(pos, pos);
+        });
     }
-    .join-input:focus {
-        border-color: #16a34a;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
-        background: #fff;
-    }
-</style>
+</script>
 {% endblock %}
