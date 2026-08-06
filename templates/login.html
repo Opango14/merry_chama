@@ -1,90 +1,85 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-8 sm:mt-16 px-4">
-    <div class="bg-white shadow-2xl rounded-3xl p-8 sm:p-10">
-        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-green-700">Welcome Back</h2>
+<div class="auth-page">
+    <div class="auth-card">
 
-        <form method="POST" class="space-y-5">
-            {% csrf_token %}
+        <!-- ── Brand panel (desktop left) ── -->
+        <div class="auth-brand">
+            <a href="/" class="auth-brand__logo">
+                <span class="auth-brand__logo-icon"><i class="fas fa-leaf"></i></span>
+                ChamaFlow
+            </a>
 
-            {% for field in form %}
-            <div>
-                <label for="{{ field.id_for_label }}"
-                       class="block text-sm font-semibold text-gray-700 mb-1">
-                    {{ field.label }}
-                </label>
+            <div class="auth-brand__body">
+                <h2 class="auth-brand__title">Welcome back to your Chama</h2>
+                <p class="auth-brand__sub">Sign in to check your group's progress, contributions, and savings.</p>
 
-                {% if field.errors %}
-                    <ul class="mb-1 space-y-0.5">
+                <ul class="auth-brand__features">
+                    <li class="auth-brand__feature">
+                        <span class="auth-brand__feature-icon"><i class="fas fa-check"></i></span>
+                        View your rotation schedule
+                    </li>
+                    <li class="auth-brand__feature">
+                        <span class="auth-brand__feature-icon"><i class="fas fa-check"></i></span>
+                        Track who's paid this cycle
+                    </li>
+                    <li class="auth-brand__feature">
+                        <span class="auth-brand__feature-icon"><i class="fas fa-check"></i></span>
+                        Download transaction reports
+                    </li>
+                </ul>
+            </div>
+
+            <p class="auth-brand__footer">ChamaFlow &copy; {{ "now"|date:"Y" }}</p>
+        </div>
+
+        <!-- ── Form panel (right) ── -->
+        <div class="auth-form-panel">
+            <div class="auth-form-header">
+                <h1 class="auth-form-title">Sign in</h1>
+                <p class="auth-form-sub">Enter your credentials to access your dashboard.</p>
+            </div>
+
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="auth-field {% if field.errors %}auth-field--error{% endif %}">
+                    <label for="{{ field.id_for_label }}" class="auth-label">
+                        {{ field.label }}
+                    </label>
+
+                    {% if field.errors %}
+                    <ul class="auth-errors">
                         {% for error in field.errors %}
-                            <li class="text-xs text-red-600">{{ error }}</li>
+                        <li>{{ error }}</li>
                         {% endfor %}
                     </ul>
-                {% endif %}
+                    {% endif %}
 
-                {{ field }}
+                    {{ field }}
 
-                {% if field.help_text %}
-                    <div class="field-help">{{ field.help_text|safe }}</div>
-                {% endif %}
-            </div>
-            {% endfor %}
+                    {% if field.help_text %}
+                    <div class="auth-help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
 
-            <button type="submit"
-                class="mt-4 w-full bg-green-700 hover:bg-green-800 active:bg-green-900
-                       text-white font-semibold py-3.5 rounded-2xl text-base sm:text-lg
-                       transition duration-200 shadow-md hover:shadow-lg">
-                Login
-            </button>
-        </form>
+                <button type="submit" class="auth-submit">Sign In</button>
+            </form>
 
-        <p class="text-center mt-6 text-gray-600 text-sm sm:text-base">
-            Don't have an account?
-            <a href="{% url 'register' %}" class="text-green-700 font-semibold hover:underline">Register Here</a>
-        </p>
+            <p class="auth-footer-link">
+                Don't have an account?
+                <a href="{% url 'register' %}">Create one free</a>
+            </p>
+        </div>
+
     </div>
 </div>
-
-<style>
-    /* Style Django-rendered input widgets inside the login form */
-    #id_username,
-    #id_password {
-        display: block;
-        width: 100%;
-        border: 1.5px solid #d1d5db;
-        border-radius: 0.75rem;
-        padding: 0.65rem 0.85rem;
-        font-size: 1rem;
-        color: #111827;
-        background: #f9fafb;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        box-sizing: border-box;
-    }
-    #id_username:focus,
-    #id_password:focus {
-        border-color: #16a34a;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
-        background: #fff;
-    }
-
-    /* Help text styling */
-    .field-help,
-    .field-help ul,
-    .field-help p {
-        margin-top: 0.25rem;
-        font-size: 0.75rem;
-        color: #6b7280;
-        line-height: 1.5;
-    }
-    .field-help ul {
-        list-style: none;
-        padding: 0;
-        margin: 0.25rem 0 0 0;
-    }
-    .field-help li + li {
-        margin-top: 0.1rem;
-    }
-</style>
 {% endblock %}
