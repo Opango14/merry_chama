@@ -11,7 +11,7 @@
 <div class="gd-page">
 
     <!-- ── Group Header Card ── -->
-    <div class="gd-card">
+    <div class="gd-card anim-reveal">
         <div class="gd-card__body">
             <div class="gd-header">
                 <div class="gd-header__left">
@@ -55,7 +55,7 @@
     <div class="gd-grid">
 
         <!-- Members list -->
-        <div class="gd-card">
+        <div class="gd-card anim-reveal">
             <div class="gd-card__body">
                 <h2 class="gd-section-title">
                     <i class="fas fa-users" aria-hidden="true"></i>
@@ -82,7 +82,7 @@
         <div class="gd-right-col">
 
             <!-- Next to Receive -->
-            <div class="gd-info-card gd-info-card--blue">
+            <div class="gd-info-card gd-info-card--blue anim-reveal">
                 <div class="gd-info-card__head">
                     <h2 class="gd-info-card__title">
                         <i class="fas fa-hand-holding-dollar" aria-hidden="true"></i>
@@ -92,7 +92,13 @@
                 <p class="gd-info-card__recipient">
                     Recipient: <strong>{{ next_recipient.username }}</strong>
                 </p>
-                <p class="gd-info-card__amount--blue">Kshs {{ collected_payout|floatformat:2 }}</p>
+                <p class="gd-info-card__amount--blue">
+                    Kshs <span
+                        data-count-up="{{ collected_payout|floatformat:2 }}"
+                        data-count-prefix=""
+                        data-count-decimals="2"
+                    >{{ collected_payout|floatformat:2 }}</span>
+                </p>
                 <p class="gd-info-card__sub">Expected total: Kshs {{ expected_payout|floatformat:2 }}</p>
                 {% if request.user == group.creator %}
                 <div class="gd-info-card__footer">
@@ -107,14 +113,20 @@
             </div>
 
             <!-- Savings Pot -->
-            <div class="gd-info-card gd-info-card--green">
+            <div class="gd-info-card gd-info-card--green anim-reveal">
                 <div class="gd-info-card__head">
                     <h2 class="gd-info-card__title">
                         <i class="fas fa-piggy-bank" aria-hidden="true"></i>
                         Savings Pot
                     </h2>
                 </div>
-                <p class="gd-info-card__amount--green">Kshs {{ group.savings_pot }}</p>
+                <p class="gd-info-card__amount--green">
+                    Kshs <span
+                        data-count-up="{{ group.savings_pot }}"
+                        data-count-prefix=""
+                        data-count-decimals="2"
+                    >{{ group.savings_pot }}</span>
+                </p>
                 <p class="gd-info-card__sub">Shared among {{ total_members }} members at end of cycle</p>
                 {% if request.user == group.creator %}
                 <div class="gd-info-card__footer">
@@ -135,7 +147,7 @@
 
     <!-- ── Record Contribution (admin only) ── -->
     {% if request.user == group.creator %}
-    <div class="gd-card">
+    <div class="gd-card anim-reveal">
         <div class="gd-card__body">
             <h2 class="gd-section-title">
                 <i class="fas fa-circle-plus" aria-hidden="true"></i>
@@ -162,7 +174,7 @@
     {% endif %}
 
     <!-- ── Contributions Table ── -->
-    <div class="gd-card">
+    <div class="gd-card anim-reveal">
         <div class="gd-card__body">
             <h2 class="gd-section-title">
                 <i class="fas fa-table-list" aria-hidden="true"></i>
