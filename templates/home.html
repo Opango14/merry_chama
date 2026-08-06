@@ -1,7 +1,12 @@
+{% load static %}
 {% extends "base.html" %}
+
+{% block extra_head %}
+<script src="{% static 'js/magnet.js' %}" defer></script>
+{% endblock %}
+
 {% block content %}
 <div class="flex flex-col items-center text-center py-12 sm:py-20 px-4 gap-6 sm:gap-8">
-
 
     <!-- SplitText target: heading -->
     <h1 id="hero-heading"
@@ -9,14 +14,13 @@
         Merry-Go-Round + Smart Savings
     </h1>
 
-    <!-- Tagline — hidden initially by GSAP (not CSS), revealed after heading finishes -->
-    <p id="hero-tagline"
-       class="text-lg sm:text-2xl text-gray-600 split-parent">
+    <!-- Tagline — hidden initially by GSAP, revealed after heading finishes -->
+    <p id="hero-tagline" class="text-lg sm:text-2xl text-gray-600 split-parent">
         Contribute • Rotate • Save • Share
     </p>
 
     <!-- CTA — hidden initially by GSAP, slides up after tagline finishes -->
-    <!-- Magnet wrapper: the outer span is the detection zone, the inner anchor moves -->
+    <!-- Magnet wrapper: outer span is detection zone, inner anchor moves -->
     <span id="magnet-wrapper" style="display:inline-block; position:relative;">
         <a id="hero-cta"
            href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}"
@@ -31,10 +35,7 @@
 {% block extra_scripts %}
 <script>
 document.fonts.ready.then(() => {
-
-    /* Hide tagline & CTA via GSAP so the parent elements stay in the DOM
-       and layout is preserved — Tailwind opacity-0 on the parent breaks
-       child-span animations because the parent never becomes visible. */
+    /* Hide tagline & CTA via GSAP so layout is preserved */
     gsap.set('#hero-tagline', { opacity: 0, y: 16 });
     gsap.set('#hero-cta',     { opacity: 0, y: 20 });
 
@@ -50,11 +51,9 @@ document.fonts.ready.then(() => {
         rootMargin: '0px',
         textAlign : 'center',
         onLetterAnimationComplete: () => {
-
-            /* Step 2: Make tagline parent fully visible FIRST,
-               then SplitText animates the individual word spans inside it */
             gsap.set('#hero-tagline', { opacity: 1, y: 0 });
 
+            /* Step 2: Tagline — word-by-word */
             SplitText('#hero-tagline', {
                 splitType : 'words',
                 delay     : 80,
@@ -66,62 +65,17 @@ document.fonts.ready.then(() => {
                 rootMargin: '0px',
                 textAlign : 'center',
                 onLetterAnimationComplete: () => {
-
-                    /* Step 3: CTA slides up below the tagline */
+                    /* Step 3: CTA slides up */
                     gsap.to('#hero-cta', {
-                        opacity  : 1,
-                        y        : 0,
-                        duration : 0.5,
-                        ease     : 'power2.out'
+                        opacity : 1,
+                        y       : 0,
+                        duration: 0.5,
+                        ease    : 'power2.out'
                     });
                 }
             });
         }
     });
 });
-
-/* ── Magnet effect for the CTA button ───────────────────────────────────
-   Mirrors the React Bits <Magnet /> component props:
-     padding        = 60   (px zone around the button that activates pull)
-     magnetStrength = 4    (higher = less movement)
-     activeTransition   = 'transform 0.3s ease-out'
-     inactiveTransition = 'transform 0.5s ease-in-out'
-─────────────────────────────────────────────────────────────────────── */
-(function () {
-    const PADDING        = 60;
-    const STRENGTH       = 4;
-    const ACTIVE_TR      = 'transform 0.3s ease-out';
-    const INACTIVE_TR    = 'transform 0.5s ease-in-out';
-
-    const wrapper = document.getElementById('magnet-wrapper');
-    const inner   = document.getElementById('hero-cta');
-    if (!wrapper || !inner) return;
-
-    let active = false;
-
-    window.addEventListener('mousemove', function (e) {
-        const rect    = wrapper.getBoundingClientRect();
-        const centerX = rect.left + rect.width  / 2;
-        const centerY = rect.top  + rect.height / 2;
-        const distX   = Math.abs(centerX - e.clientX);
-        const distY   = Math.abs(centerY - e.clientY);
-
-        if (distX < rect.width / 2 + PADDING && distY < rect.height / 2 + PADDING) {
-            if (!active) {
-                active = true;
-                inner.style.transition = ACTIVE_TR;
-            }
-            const offsetX = (e.clientX - centerX) / STRENGTH;
-            const offsetY = (e.clientY - centerY) / STRENGTH;
-            inner.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0)`;
-        } else {
-            if (active) {
-                active = false;
-                inner.style.transition = INACTIVE_TR;
-                inner.style.transform  = 'translate3d(0, 0, 0)';
-            }
-        }
-    });
-}());
 </script>
 {% endblock %}
