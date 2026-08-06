@@ -3,6 +3,8 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/group_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/modals.css' %}">
+<script src="{% static 'js/modals.js' %}" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -94,13 +96,12 @@
                 <p class="gd-info-card__sub">Expected total: Kshs {{ expected_payout|floatformat:2 }}</p>
                 {% if request.user == group.creator %}
                 <div class="gd-info-card__footer">
-                    <form method="POST" action="{% url 'payout_recipient' group.pk %}" style="width:100%;">
-                        {% csrf_token %}
-                        <button type="submit" class="gd-btn-blue">
-                            <i class="fas fa-circle-check" aria-hidden="true"></i>
-                            Give to Recipient &amp; Next Cycle
-                        </button>
-                    </form>
+                    <button type="button" class="gd-btn-blue"
+                            onclick="openModal('modal-payout')"
+                            aria-haspopup="dialog">
+                        <i class="fas fa-circle-check" aria-hidden="true"></i>
+                        Give to Recipient &amp; Next Cycle
+                    </button>
                 </div>
                 {% endif %}
             </div>
@@ -117,13 +118,12 @@
                 <p class="gd-info-card__sub">Shared among {{ total_members }} members at end of cycle</p>
                 {% if request.user == group.creator %}
                 <div class="gd-info-card__footer">
-                    <form method="POST" action="{% url 'distributive_savings' group.pk %}" style="width:100%;">
-                        {% csrf_token %}
-                        <button type="submit" class="gd-btn-green">
-                            <i class="fas fa-share-nodes" aria-hidden="true"></i>
-                            Distribute Equally Now
-                        </button>
-                    </form>
+                    <button type="button" class="gd-btn-green"
+                            onclick="openModal('modal-distribute')"
+                            aria-haspopup="dialog">
+                        <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                        Distribute Equally Now
+                    </button>
                 </div>
                 {% else %}
                 <p class="gd-admin-note">Only the group admin can distribute savings.</p>
@@ -223,6 +223,107 @@
     </div>
 
 </div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODALS (admin only — rendered but hidden until triggered)
+═════════════════════════════════════════════════════════════ -->
+{% if request.user == group.creator %}
+
+<!-- Modal 1: Confirm Payout -->
+<div id="modal-payout"
+     class="modal-backdrop"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modal-payout-title"
+     aria-hidden="true">
+    <div class="modal">
+        <div class="modal__stripe modal__stripe--blue" aria-hidden="true"></div>
+        <button class="modal__close" onclick="closeModal('modal-payout')" aria-label="Close">
+            <i class="fas fa-xmark"></i>
+        </button>
+        <div class="modal__body">
+            <div class="modal__icon modal__icon--blue" aria-hidden="true">
+                <i class="fas fa-hand-holding-dollar"></i>
+            </div>
+            <h2 id="modal-payout-title" class="modal__title">Confirm Payout</h2>
+            <p class="modal__message">
+                This will record the payout to the current recipient and advance the group to the next cycle.
+                This action cannot be undone.
+            </p>
+            <div class="modal__detail">
+                <div class="modal__detail-row">
+                    <span class="modal__detail-label">Recipient</span>
+                    <span class="modal__detail-value">{{ next_recipient.username }}</span>
+                </div>
+                <div class="modal__detail-row">
+                    <span class="modal__detail-label">Amount</span>
+                    <span class="modal__detail-value modal__detail-value--blue">Kshs {{ collected_payout|floatformat:2 }}</span>
+                </div>
+                <div class="modal__detail-row">
+                    <span class="modal__detail-label">Next Cycle</span>
+                    <span class="modal__detail-value">{{ group.current_cycle|add:1 }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal__footer">
+            <button type="button" class="modal__cancel" onclick="closeModal('modal-payout')">Cancel</button>
+            <form method="POST" action="{% url 'payout_recipient' group.pk %}" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="modal__confirm modal__confirm--blue">
+                    <i class="fas fa-circle-check" aria-hidden="true"></i>
+                    Yes, Pay Out
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 2: Confirm Distribute Savings -->
+<div id="modal-distribute"
+     class="modal-backdrop"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modal-distribute-title"
+     aria-hidden="true">
+    <div class="modal">
+        <div class="modal__stripe modal__stripe--green" aria-hidden="true"></div>
+        <button class="modal__close" onclick="closeModal('modal-distribute')" aria-label="Close">
+            <i class="fas fa-xmark"></i>
+        </button>
+        <div class="modal__body">
+            <div class="modal__icon modal__icon--green" aria-hidden="true">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <h2 id="modal-distribute-title" class="modal__title">Distribute Savings?</h2>
+            <p class="modal__message">
+                The savings pot will be split equally among all {{ total_members }} members.
+                This will clear the pot back to zero.
+            </p>
+            <div class="modal__detail">
+                <div class="modal__detail-row">
+                    <span class="modal__detail-label">Total Pot</span>
+                    <span class="modal__detail-value modal__detail-value--green">Kshs {{ group.savings_pot }}</span>
+                </div>
+                <div class="modal__detail-row">
+                    <span class="modal__detail-label">Members</span>
+                    <span class="modal__detail-value">{{ total_members }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal__footer">
+            <button type="button" class="modal__cancel" onclick="closeModal('modal-distribute')">Cancel</button>
+            <form method="POST" action="{% url 'distributive_savings' group.pk %}" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="modal__confirm modal__confirm--green">
+                    <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                    Yes, Distribute
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
