@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — SplitText
+ * MerryChama — SplitText
  * Vanilla JS port of the React Bits SplitText component.
  * Loaded by base.html via {% static 'js/splittext.js' %}
  *

@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — Shared UI Behaviors
+ * MerryChama — Shared UI Behaviors
  * Ported from merry_chama2/static/js/app.js — no framework, no build step.
  * Loaded globally in base.html (defer).
  */

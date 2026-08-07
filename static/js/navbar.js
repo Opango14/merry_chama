@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — Navbar
+ * MerryChama — Navbar
  * Phase 2: Mobile menu toggle + outside-click close.
  * Loaded by base.html via {% static 'js/navbar.js' %}
  */

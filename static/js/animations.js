@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — Animations
+ * MerryChama — Animations
  * Phase 9: Scroll-reveal (IntersectionObserver) + GSAP number counter.
  * Loaded globally via base.html via {% static 'js/animations.js' %}
  *

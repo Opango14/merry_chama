@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — Magnet Effect
+ * MerryChama — Magnet Effect
  * Vanilla JS port of the React Bits <Magnet /> component.
  * Loaded by home.html via {% static 'js/magnet.js' %}
  *

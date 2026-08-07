@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — Modal / Dialog System
+ * MerryChama — Modal / Dialog System
  * Phase 7: Open/close logic, keyboard handling, focus trap, backdrop click.
  * Loaded per-page via {% static 'js/modals.js' %}
  */

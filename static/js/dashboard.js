@@ -1,5 +1,5 @@
 /**
- * ChamaFlow — Dashboard
+ * MerryChama — Dashboard
  * Phase 4: Card entrance animations.
  * Loaded by dashboard.html via {% static 'js/dashboard.js' %}
  *
