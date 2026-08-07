@@ -18,6 +18,22 @@ Merry Chama is a Django web application for managing chama groups, contributions
 
 ## Local development
 
+### Option 1: Use the startup script
+
+Run the project with:
+
+```bash
+bash start.sh
+```
+
+This will:
+- create a virtual environment if needed
+- install dependencies
+- apply migrations
+- start the Django development server at http://0.0.0.0:8000/
+
+### Option 2: Run manually
+
 1. Create and activate a virtual environment
    ```bash
    python3 -m venv .venv
@@ -36,7 +52,7 @@ Merry Chama is a Django web application for managing chama groups, contributions
 
 4. Run the development server
    ```bash
-   python manage.py runserver
+   python manage.py runserver 0.0.0.0:8000
    ```
 
 5. Open http://127.0.0.1:8000/
