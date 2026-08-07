@@ -28,9 +28,7 @@ def get_bool_env(name, default=False):
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ(
-    "SECRET_KEY",
-)
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_bool_env("DEBUG", False)
