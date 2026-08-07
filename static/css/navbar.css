@@ -1,0 +1,330 @@
+/* ══════════════════════════════════════════════════════════════════
+   ChamaFlow — Navbar
+   Phase 2: Navigation styles.
+   Loaded by base.html via {% static 'css/navbar.css' %}
+════════════════════════════════════════════════════════════════════ */
+
+/* ── Navbar shell ───────────────────────────────────────────────── */
+.cf-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid var(--clr-neutral-200);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.04);
+    /* Frosted glass on supported browsers */
+    backdrop-filter: saturate(1.8) blur(12px);
+    -webkit-backdrop-filter: saturate(1.8) blur(12px);
+}
+
+.cf-nav__inner {
+    max-width: 1152px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* ── Logo ───────────────────────────────────────────────────────── */
+.cf-nav__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--clr-brand-700);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    transition: opacity var(--transition-base);
+}
+.cf-nav__logo:hover { opacity: 0.85; }
+.cf-nav__logo-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--clr-brand-700);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* ── Desktop links ──────────────────────────────────────────────── */
+.cf-nav__links {
+    display: none;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 768px) {
+    .cf-nav__links { display: flex; }
+}
+
+.cf-nav__link {
+    position: relative;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--clr-neutral-600);
+    text-decoration: none;
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-md);
+    transition: color var(--transition-base), background var(--transition-base);
+}
+.cf-nav__link:hover {
+    color: var(--clr-brand-700);
+    background: var(--clr-brand-50);
+}
+/* Underline indicator */
+.cf-nav__link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0.65rem;
+    right: 0.65rem;
+    height: 2px;
+    background: var(--clr-brand-600);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cf-nav__link:hover::after { transform: scaleX(1); }
+
+/* Active link — same underline, always visible */
+.cf-nav__link--active {
+    color: var(--clr-brand-700);
+    background: var(--clr-brand-50);
+}
+.cf-nav__link--active::after { transform: scaleX(1); }
+
+/* ── Right side controls ────────────────────────────────────────── */
+.cf-nav__right {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .cf-nav__right { display: flex; }
+}
+
+/* User chip */
+.cf-nav__user {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-neutral-700);
+    background: var(--clr-neutral-100);
+    border: 1px solid var(--clr-neutral-200);
+    border-radius: 9999px;
+    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+}
+.cf-nav__avatar {
+    width: 22px;
+    height: 22px;
+    background: var(--clr-brand-600);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+/* Logout link */
+.cf-nav__logout {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-neutral-500);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--clr-neutral-200);
+    transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base);
+}
+.cf-nav__logout:hover {
+    color: #b91c1c;
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+/* CTA pill — "Join Free" */
+.cf-nav__cta {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--clr-brand-700);
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border-radius: 9999px;
+    transition: background var(--transition-base), box-shadow var(--transition-base);
+}
+.cf-nav__cta:hover {
+    background: var(--clr-brand-800);
+    box-shadow: 0 3px 10px -2px rgba(21, 128, 61, 0.35);
+}
+
+/* Login link */
+.cf-nav__login {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--clr-neutral-600);
+    text-decoration: none;
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-md);
+    transition: color var(--transition-base), background var(--transition-base);
+}
+.cf-nav__login:hover {
+    color: var(--clr-brand-700);
+    background: var(--clr-brand-50);
+}
+
+/* ── Hamburger button ───────────────────────────────────────────── */
+.cf-nav__burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--transition-base);
+}
+.cf-nav__burger:hover { background: var(--clr-neutral-100); }
+
+@media (min-width: 768px) {
+    .cf-nav__burger { display: none; }
+}
+
+.cf-nav__burger-bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--clr-neutral-700);
+    border-radius: 2px;
+    transform-origin: center;
+    transition:
+        transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity   0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Open state — bars morph into × */
+.cf-nav__burger[aria-expanded="true"] .cf-nav__burger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.cf-nav__burger[aria-expanded="true"] .cf-nav__burger-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.cf-nav__burger[aria-expanded="true"] .cf-nav__burger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Mobile menu ────────────────────────────────────────────────── */
+.cf-nav__mobile {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity   0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    border-top: 1px solid transparent;
+}
+.cf-nav__mobile.is-open {
+    max-height: 400px;
+    opacity: 1;
+    border-top-color: var(--clr-neutral-100);
+}
+
+.cf-nav__mobile-inner {
+    padding: 0.75rem 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.cf-nav__mobile-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--clr-neutral-700);
+    text-decoration: none;
+    padding: 0.65rem 0.75rem;
+    border-radius: var(--radius-lg);
+    transition: color var(--transition-base), background var(--transition-base);
+}
+.cf-nav__mobile-link:hover {
+    color: var(--clr-brand-700);
+    background: var(--clr-brand-50);
+}
+
+.cf-nav__mobile-divider {
+    height: 1px;
+    background: var(--clr-neutral-100);
+    margin: 0.5rem 0;
+}
+
+.cf-nav__mobile-user {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-neutral-500);
+}
+
+.cf-nav__mobile-cta {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--clr-brand-700);
+    text-decoration: none;
+    padding: 0.75rem;
+    border-radius: var(--radius-xl);
+    margin-top: 0.5rem;
+    transition: background var(--transition-base);
+}
+.cf-nav__mobile-cta:hover { background: var(--clr-brand-800); }
+
+.cf-nav__mobile-logout {
+    display: block;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b91c1c;
+    text-decoration: none;
+    padding: 0.65rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    margin-top: 0.25rem;
+    transition: background var(--transition-base), border-color var(--transition-base);
+}
+.cf-nav__mobile-logout:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}

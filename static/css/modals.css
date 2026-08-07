@@ -1,0 +1,206 @@
+/* ══════════════════════════════════════════════════════════════════
+   ChamaFlow — Modal / Dialog System
+   Phase 7: Confirmation dialogs and alert overlays.
+   Loaded per-page via {% block extra_head %} + {% static 'css/modals.css' %}
+════════════════════════════════════════════════════════════════════ */
+
+/* ── Backdrop ───────────────────────────────────────────────────── */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(15, 23, 42, 0.50);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+
+    /* Hidden by default */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Dialog card ────────────────────────────────────────────────── */
+.modal {
+    background: #fff;
+    border-radius: var(--radius-3xl);
+    box-shadow: var(--shadow-modal);
+    border: 1px solid var(--clr-neutral-100);
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+
+    /* Entrance animation */
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-backdrop.is-open .modal {
+    transform: translateY(0) scale(1);
+}
+
+/* ── Modal top accent stripe ────────────────────────────────────── */
+.modal__stripe {
+    height: 4px;
+}
+.modal__stripe--blue  { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.modal__stripe--green { background: linear-gradient(90deg, var(--clr-brand-600), var(--clr-brand-400)); }
+.modal__stripe--red   { background: linear-gradient(90deg, #dc2626, #f87171); }
+
+/* ── Modal body ─────────────────────────────────────────────────── */
+.modal__body {
+    padding: 1.75rem 1.75rem 0;
+}
+
+/* ── Icon ───────────────────────────────────────────────────────── */
+.modal__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+}
+.modal__icon--blue  { background: #eff6ff; color: #2563eb; }
+.modal__icon--green { background: var(--clr-brand-50); color: var(--clr-brand-700); }
+.modal__icon--amber { background: #fffbeb; color: #d97706; }
+
+/* ── Title & message ────────────────────────────────────────────── */
+.modal__title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--clr-neutral-900);
+    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem;
+}
+
+.modal__message {
+    font-size: 0.875rem;
+    color: var(--clr-neutral-600);
+    line-height: 1.6;
+    margin: 0 0 0.5rem;
+}
+
+/* Summary detail box */
+.modal__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.875rem 1rem;
+    background: var(--clr-neutral-50);
+    border: 1px solid var(--clr-neutral-100);
+    border-radius: var(--radius-xl);
+    margin: 0.75rem 0 0;
+}
+
+.modal__detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+}
+
+.modal__detail-label {
+    color: var(--clr-neutral-500);
+    font-weight: 500;
+}
+
+.modal__detail-value {
+    font-weight: 700;
+    color: var(--clr-neutral-800);
+    font-variant-numeric: tabular-nums;
+}
+.modal__detail-value--blue  { color: #2563eb; }
+.modal__detail-value--green { color: var(--clr-brand-700); }
+
+/* ── Footer / actions ───────────────────────────────────────────── */
+.modal__footer {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem 1.75rem 1.75rem;
+    justify-content: flex-end;
+}
+
+.modal__cancel {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--clr-neutral-600);
+    background: #fff;
+    border: 1.5px solid var(--clr-neutral-200);
+    border-radius: var(--radius-2xl);
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    transition: background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+}
+.modal__cancel:hover {
+    background: var(--clr-neutral-50);
+    border-color: var(--clr-neutral-300);
+    color: var(--clr-neutral-800);
+}
+
+.modal__confirm {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-2xl);
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    transition: background var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+.modal__confirm:active { transform: scale(0.97); }
+
+.modal__confirm--blue {
+    background: #2563eb;
+}
+.modal__confirm--blue:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.40);
+}
+
+.modal__confirm--green {
+    background: var(--clr-brand-700);
+}
+.modal__confirm--green:hover {
+    background: var(--clr-brand-800);
+    box-shadow: 0 4px 12px -2px rgba(21, 128, 61, 0.40);
+}
+
+/* ── Close button (top-right) ───────────────────────────────────── */
+.modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--clr-neutral-100);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clr-neutral-500);
+    font-size: 0.7rem;
+    transition: background var(--transition-base), color var(--transition-base);
+}
+.modal__close:hover {
+    background: var(--clr-neutral-200);
+    color: var(--clr-neutral-800);
+}
+
+/* Need relative on the .modal for the close button */
+.modal { position: relative; }

@@ -1,71 +1,227 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ChamaFlow - Merry-Go-Round</title>
+
+        <!-- ── Inter font ── -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- ── Tailwind CDN with extended config ── -->
+        <script>
+            window.tailwind = window.tailwind || {};
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        },
+                        colors: {
+                            brand: {
+                                50:  '#f0fdf4',
+                                100: '#dcfce7',
+                                200: '#bbf7d0',
+                                300: '#86efac',
+                                400: '#4ade80',
+                                500: '#22c55e',
+                                600: '#16a34a',
+                                700: '#15803d',
+                                800: '#166534',
+                                900: '#14532d',
+                            },
+                        },
+                        borderRadius: {
+                            '2xl': '1rem',
+                            '3xl': '1.5rem',
+                            '4xl': '2rem',
+                        },
+                        boxShadow: {
+                            'card':        '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06)',
+                            'card-hover':  '0 4px 16px -2px rgb(0 0 0 / 0.10), 0 2px 6px -2px rgb(0 0 0 / 0.08)',
+                            'input-focus': '0 0 0 3px rgba(21, 128, 61, 0.18)',
+                        },
+                    }
+                }
+            };
+        </script>
         <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- ── Font Awesome ── -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        <!-- GSAP + ScrollTrigger (free CDN) -->
+        <!-- ── Design System CSS ── -->
+        <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+
+        <!-- ── Navbar CSS ── -->
+        <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
+        <!-- ── Responsive / Mobile CSS (loads last — overrides all components) ── -->
+        <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+        <!-- ── Animations CSS ── -->
+        <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+
+        <!-- ── Dark theme (loads last — overrides all surfaces) ── -->
+        <link id="theme-stylesheet" rel="stylesheet" href="{% static 'css/theme.css' %}">
+        <!-- Restore user's saved preference before paint (prevents FOUC) -->
+        <script>
+            (function () {
+                if (localStorage.getItem('cf-theme') === 'light') {
+                    document.getElementById('theme-stylesheet').disabled = true;
+                }
+            }());
+        </script>
+
+        <!-- ── GSAP + ScrollTrigger ── -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-        <style>
-            /* Clip overflow on animated parents so letters don't show outside bounds */
-            .split-parent { display: inline-block; }
-            .split-char, .split-word { display: inline-block; will-change: transform, opacity; }
-        </style>
+        <!-- ── SplitText helper ── -->
+        <script src="{% static 'js/splittext.js' %}" defer></script>
+
+        <!-- ── Navbar JS ── -->
+        <script src="{% static 'js/navbar.js' %}" defer></script>
+
+        <!-- ── Animations JS (scroll-reveal + counters) ── -->
+        <script src="{% static 'js/animations.js' %}" defer></script>
+
+        <!-- ── App utilities (cfToast, cfCopy, cfTableSearch, spotlight, loading state) ── -->
+        <script src="{% static 'js/app.js' %}" defer></script>
+
+        {% block extra_head %}{% endblock %}
     </head>
-    <body class="bg-gray-50 font-sans">
+    <body class="bg-[#f8fafc] font-sans">
 
         <!-- ── Navbar ── -->
-        <nav class="bg-green-700 text-white shadow-md">
-            <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-                <a href="/" class="text-xl sm:text-2xl font-bold tracking-tight">ChamaFlow</a>
+        <nav class="cf-nav" role="navigation" aria-label="Main navigation">
+            <div class="cf-nav__inner">
 
-                <!-- Desktop links -->
-                <div class="hidden md:flex items-center gap-6">
+                <!-- Logo -->
+                <a href="/" class="cf-nav__logo">
+                    <span class="cf-nav__logo-icon" aria-hidden="true">
+                        <i class="fas fa-leaf"></i>
+                    </span>
+                    ChamaFlow
+                </a>
+
+                <!-- Desktop nav links -->
+                <ul class="cf-nav__links" role="list">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}" class="hover:underline">Dashboard</a>
-                        <a href="{% url 'create_group' %}" class="hover:underline">Create Chama</a>
-                        <span class="text-green-200 text-sm">{{ user.username }}</span>
-                        <a href="{% url 'logout' %}" class="bg-white text-green-700 px-4 py-1 rounded-full font-medium text-sm">Logout</a>
+                        <li><a href="{% url 'dashboard' %}"
+                               class="cf-nav__link {% if request.resolver_match.url_name == 'dashboard' %}cf-nav__link--active{% endif %}">Dashboard</a></li>
+                        <li><a href="{% url 'join_group' %}"
+                               class="cf-nav__link {% if request.resolver_match.url_name == 'join_group' %}cf-nav__link--active{% endif %}">Join Chama</a></li>
+                        <li><a href="{% url 'create_group' %}"
+                               class="cf-nav__link {% if request.resolver_match.url_name == 'create_group' %}cf-nav__link--active{% endif %}">Create Chama</a></li>
                     {% else %}
-                        <a href="{% url 'login' %}">Login</a>
-                        <a href="{% url 'register' %}" class="bg-white text-green-700 px-5 py-2 rounded-full font-medium text-sm">Join Free</a>
+                        <li><a href="{% url 'login' %}" class="cf-nav__login">Login</a></li>
+                    {% endif %}
+                </ul>
+
+                <!-- Desktop right controls -->
+                <div class="cf-nav__right">
+                    <!-- Theme toggle -->
+                    <button type="button"
+                            id="theme-toggle-btn"
+                            onclick="cfToggleTheme()"
+                            aria-label="Toggle light / dark theme"
+                            class="cf-nav__theme-toggle focus-ring">
+                        <i class="fa-solid fa-sun" data-theme-icon aria-hidden="true"></i>
+                    </button>
+                    {% if user.is_authenticated %}
+                        <span class="cf-nav__user">
+                            <span class="cf-nav__avatar" aria-hidden="true">
+                                {{ user.username|slice:":1" }}
+                            </span>
+                            {{ user.username }}
+                        </span>
+                        <a href="{% url 'logout' %}" class="cf-nav__logout">Logout</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="cf-nav__cta">Join Free</a>
                     {% endif %}
                 </div>
 
                 <!-- Mobile hamburger -->
-                <button id="nav-toggle" class="md:hidden focus:outline-none" aria-label="Toggle menu">
-                    <i class="fas fa-bars text-xl"></i>
+                <button id="nav-toggle"
+                        class="cf-nav__burger"
+                        aria-expanded="false"
+                        aria-controls="nav-menu"
+                        aria-label="Open menu">
+                    <span class="cf-nav__burger-bar"></span>
+                    <span class="cf-nav__burger-bar"></span>
+                    <span class="cf-nav__burger-bar"></span>
                 </button>
             </div>
 
             <!-- Mobile dropdown -->
-            <div id="nav-menu" class="hidden md:hidden bg-green-800 px-4 pb-4 space-y-3 text-sm">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="block py-2 hover:text-green-200">Dashboard</a>
-                    <a href="{% url 'create_group' %}" class="block py-2 hover:text-green-200">Create Chama</a>
-                    <span class="block py-1 text-green-300"> {{ user.username }}</span>
-                    <a href="{% url 'logout' %}" class="block bg-white text-green-700 text-center py-2 rounded-xl font-medium">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="block py-2 hover:text-green-200">Login</a>
-                    <a href="{% url 'register' %}" class="block bg-white text-green-700 text-center py-2 rounded-xl font-medium">Join Free</a>
-                {% endif %}
+            <div id="nav-menu" class="cf-nav__mobile" role="menu">
+                <div class="cf-nav__mobile-inner">
+                    {% if user.is_authenticated %}
+                        <div class="cf-nav__mobile-user">
+                            <span class="cf-nav__avatar" aria-hidden="true">{{ user.username|slice:":1" }}</span>
+                            {{ user.username }}
+                        </div>
+                        <div class="cf-nav__mobile-divider"></div>
+                        <a href="{% url 'dashboard' %}" class="cf-nav__mobile-link" role="menuitem">
+                            <i class="fas fa-grid-2 fa-fw" aria-hidden="true"></i> Dashboard
+                        </a>
+                        <a href="{% url 'join_group' %}" class="cf-nav__mobile-link" role="menuitem">
+                            <i class="fas fa-right-to-bracket fa-fw" aria-hidden="true"></i> Join Chama
+                        </a>
+                        <a href="{% url 'create_group' %}" class="cf-nav__mobile-link" role="menuitem">
+                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i> Create Chama
+                        </a>
+                        <div class="cf-nav__mobile-divider"></div>
+                        <button type="button"
+                                onclick="cfToggleTheme()"
+                                class="cf-nav__mobile-link cf-nav__theme-toggle"
+                                style="width:100%;border:none;background:none;cursor:pointer;text-align:left;"
+                                aria-label="Toggle light / dark theme">
+                            <i class="fa-solid fa-sun fa-fw" data-theme-icon aria-hidden="true"></i>
+                            <span class="theme-toggle-label">Switch theme</span>
+                        </button>
+                        <div class="cf-nav__mobile-divider"></div>
+                        <a href="{% url 'logout' %}" class="cf-nav__mobile-logout" role="menuitem">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="cf-nav__mobile-link" role="menuitem">
+                            <i class="fas fa-arrow-right-to-bracket fa-fw" aria-hidden="true"></i> Login
+                        </a>
+                        <button type="button"
+                                onclick="cfToggleTheme()"
+                                class="cf-nav__mobile-link cf-nav__theme-toggle"
+                                style="width:100%;border:none;background:none;cursor:pointer;text-align:left;"
+                                aria-label="Toggle light / dark theme">
+                            <i class="fa-solid fa-sun fa-fw" data-theme-icon aria-hidden="true"></i>
+                            <span class="theme-toggle-label">Switch theme</span>
+                        </button>
+                        <a href="{% url 'register' %}" class="cf-nav__mobile-cta" role="menuitem">Join Free</a>
+                    {% endif %}
+                </div>
             </div>
         </nav>
 
         <div class="max-w-6xl mx-auto px-4 py-6">
             {% if messages %}
-                <div class="mb-4 space-y-2">
+                <div class="mb-5 space-y-2">
                     {% for message in messages %}
-                        <div class="px-4 py-3 rounded-xl text-sm font-medium
-                            {% if message.tags == 'error' %}bg-red-100 text-red-700
-                            {% elif message.tags == 'success' %}bg-green-100 text-green-700
-                            {% else %}bg-blue-100 text-blue-700{% endif %}">
-                            {{ message }}
+                        <div class="toast
+                            {% if message.tags == 'error' %}toast-error
+                            {% elif message.tags == 'success' %}toast-success
+                            {% else %}toast-info{% endif %}">
+                            <span class="toast-icon">
+                                {% if message.tags == 'error' %}
+                                    <i class="fas fa-circle-xmark"></i>
+                                {% elif message.tags == 'success' %}
+                                    <i class="fas fa-circle-check"></i>
+                                {% else %}
+                                    <i class="fas fa-circle-info"></i>
+                                {% endif %}
+                            </span>
+                            <span>{{ message }}</span>
                         </div>
                     {% endfor %}
                 </div>
@@ -73,122 +229,10 @@
             {% block content %}{% endblock %}
         </div>
 
-        <!-- ── Hamburger toggle ── -->
-        <script>
-            const toggle = document.getElementById('nav-toggle');
-            const menu   = document.getElementById('nav-menu');
-            toggle.addEventListener('click', () => menu.classList.toggle('hidden'));
-        </script>
+        <!-- Hamburger toggle handled by static/js/navbar.js -->
 
-        <!-- ══════════════════════════════════════════════════════════════
-             SplitText — vanilla JS port of the React Bits component.
-             API mirrors the React component props exactly.
-             Usage:
-               SplitText('#my-el', {
-                 splitType: 'chars',          // 'chars' | 'words' | 'lines' | 'words, chars'
-                 delay: 60,                   // stagger delay in ms
-                 duration: 0.8,
-                 ease: 'power3.out',
-                 from: { opacity: 0, y: 40 },
-                 to:   { opacity: 1, y: 0 },
-                 threshold: 0.1,
-                 rootMargin: '-100px',
-                 textAlign: 'center',
-                 onLetterAnimationComplete: () => console.log('done')
-               });
-        ════════════════════════════════════════════════════════════════ -->
-        <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        function SplitText(selector, {
-            delay                    = 50,
-            duration                 = 1.25,
-            ease                     = 'power3.out',
-            splitType                = 'chars',
-            from                     = { opacity: 0, y: 40 },
-            to                       = { opacity: 1, y: 0 },
-            threshold                = 0.1,
-            rootMargin               = '-100px',
-            textAlign                = 'center',
-            onLetterAnimationComplete = null
-        } = {}) {
-            const el = typeof selector === 'string'
-                ? document.querySelector(selector)
-                : selector;
-            if (!el) return;
-
-            /* ── split the DOM ─────────────────────────────────────── */
-            const rawText = el.textContent;
-            el.innerHTML  = '';
-            el.style.textAlign = textAlign;
-
-            const targets = [];
-            const wantChars  = splitType.includes('chars');
-            const wantWords  = splitType.includes('words');
-
-            const words = rawText.split(/(\s+)/);          // keep whitespace tokens
-            words.forEach(token => {
-                if (/^\s+$/.test(token)) {
-                    // pure whitespace — keep as text node
-                    el.appendChild(document.createTextNode(token));
-                    return;
-                }
-                if (wantChars) {
-                    // wrap each character
-                    const wordWrap = document.createElement('span');
-                    wordWrap.className = 'split-word';
-                    token.split('').forEach(ch => {
-                        const span = document.createElement('span');
-                        span.className   = 'split-char';
-                        span.textContent = ch;
-                        wordWrap.appendChild(span);
-                        targets.push(span);
-                    });
-                    el.appendChild(wordWrap);
-                } else {
-                    // word-level split
-                    const span = document.createElement('span');
-                    span.className   = 'split-word';
-                    span.textContent = token;
-                    el.appendChild(span);
-                    targets.push(span);
-                }
-            });
-
-            /* ── build ScrollTrigger start string ─────────────────── */
-            const startPct = (1 - threshold) * 100;
-            const m        = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(rootMargin.trim());
-            const mVal     = m ? parseFloat(m[1]) : 0;
-            const mUnit    = m ? (m[2] || 'px') : 'px';
-            const offset   = mVal === 0 ? ''
-                           : mVal < 0   ? ` -=${Math.abs(mVal)}${mUnit}`
-                                        : ` +=${mVal}${mUnit}`;
-            const start    = `top ${startPct}%${offset}`;
-
-            /* ── animate ───────────────────────────────────────────── */
-            gsap.fromTo(
-                targets,
-                { ...from },
-                {
-                    ...to,
-                    duration,
-                    ease,
-                    stagger: delay / 1000,
-                    force3D: true,
-                    scrollTrigger: {
-                        trigger    : el,
-                        start,
-                        once       : true,
-                        fastScrollEnd: true
-                    },
-                    onComplete: () => {
-                        if (typeof onLetterAnimationComplete === 'function')
-                            onLetterAnimationComplete();
-                    }
-                }
-            );
-        }
-        </script>
+        <!-- ── JS toast region (for cfToast() calls) ── -->
+        <div id="toast-region" aria-live="polite" aria-atomic="false"></div>
 
         {% block extra_scripts %}{% endblock %}
     </body>

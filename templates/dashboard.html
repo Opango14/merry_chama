@@ -1,81 +1,117 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<script src="{% static 'js/dashboard.js' %}" defer></script>
+{% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div class="mb-6 sm:mb-10">
-    <h1 id="dash-welcome"
-        class="text-2xl sm:text-4xl font-bold text-green-700 split-parent">
+
+<!-- ── Welcome header ── -->
+<div class="dash-header">
+    <p class="dash-section-label">
+        <i class="fas fa-leaf" aria-hidden="true"></i>
+        Dashboard
+    </p>
+    <h1 id="dash-welcome" class="dash-welcome split-parent">
         Welcome, {{ user.username }}
     </h1>
-    <p id="dash-sub" class="text-gray-600 mt-1 sm:mt-2 opacity-0">
+    <p id="dash-sub" class="dash-sub" style="opacity:0;">
         Manage your Merry-Go-Round groups
     </p>
 </div>
 
-<!-- Action bar -->
-<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
-    <h2 class="text-xl sm:text-2xl font-semibold">Your Chamas</h2>
-    <div class="flex flex-col xs:flex-row gap-3">
-        <a href="{% url 'join_group' %}"
-           class="flex items-center justify-center gap-2 bg-gray-100 text-green-700 border border-green-700 px-6 py-3 rounded-2xl font-medium hover:bg-green-50 transition">
-            <i class="fas fa-sign-in-alt"></i> Join Chama
+<!-- ── Action bar ── -->
+<div class="dash-actions">
+    <h2 class="dash-actions__title">Your Chamas</h2>
+    <div class="dash-actions__btns">
+        <a href="{% url 'join_group' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+            Join Chama
         </a>
-        <a href="{% url 'create_group' %}"
-           class="flex items-center justify-center gap-2 bg-green-700 text-white px-6 py-3 rounded-2xl font-medium hover:bg-green-800 transition">
-            <i class="fas fa-plus"></i> Create New Chama
+        <a href="{% url 'create_group' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            Create New Chama
         </a>
     </div>
 </div>
 
+<!-- ── Group cards or empty state ── -->
 {% if groups %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div class="dash-grid">
         {% for group in groups %}
-        <div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition">
-            <div class="h-2 bg-green-600"></div>
-            <div class="p-5 sm:p-6">
-                <h3 class="text-lg sm:text-xl font-semibold">{{ group.name }}</h3>
-                <p class="text-green-600 font-mono mt-1 text-sm sm:text-base">
-                    Kshs {{ group.contribution_amount }} • {{ group.frequency|title }}
+        <article class="dash-card" aria-label="{{ group.name }} group">
+            <div class="dash-card__stripe" aria-hidden="true"></div>
+            <div class="dash-card__body">
+
+                <!-- Card header: name + frequency badge -->
+                <div class="dash-card__head">
+                    <h3 class="dash-card__name">{{ group.name }}</h3>
+                    <span class="dash-card__freq">{{ group.frequency|title }}</span>
+                </div>
+
+                <!-- Contribution amount -->
+                <p class="dash-card__amount">
+                    <strong>Kshs {{ group.contribution_amount }}</strong> per member
                 </p>
 
-                <div class="mt-4 sm:mt-6 flex justify-between text-sm">
-                    <div>
-                        <span class="block text-gray-500">Savings Rate</span>
-                        <span class="font-semibold">{{ group.savings_rate }}%</span>
+                <!-- Stats grid -->
+                <div class="dash-card__stats">
+                    <div class="dash-card__stat">
+                        <span class="dash-card__stat-label">Rate</span>
+                        <span class="dash-card__stat-value">{{ group.savings_rate }}%</span>
                     </div>
-                    <div>
-                        <span class="block text-gray-500">Savings Pot</span>
-                        <span class="font-semibold text-green-700">{{ group.savings_pot }}</span>
+                    <div class="dash-card__stat">
+                        <span class="dash-card__stat-label">Pot</span>
+                        <span class="dash-card__stat-value dash-card__stat-value--green">
+                            {{ group.savings_pot }}
+                        </span>
                     </div>
-                    <div>
-                        <span class="block text-gray-500">Cycle</span>
-                        <span class="font-semibold">{{ group.current_cycle }}</span>
+                    <div class="dash-card__stat">
+                        <span class="dash-card__stat-label">Cycle</span>
+                        <span class="dash-card__stat-value">{{ group.current_cycle }}</span>
                     </div>
                 </div>
 
-                <a href="{% url 'group_detail' group.pk %}"
-                   class="mt-6 block text-center bg-green-100 text-green-700 py-3 rounded-2xl font-medium hover:bg-green-200 transition">
-                   Open Group
+                <!-- CTA -->
+                <a href="{% url 'group_detail' group.pk %}" class="dash-card__cta">
+                    Open Group
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
-        </div>
+        </article>
         {% endfor %}
     </div>
+
 {% else %}
-    <div class="bg-white rounded-3xl p-8 sm:p-12 text-center">
-        <p class="text-xl sm:text-2xl text-gray-400 mb-4">You are not part of any Chama yet</p>
-        <a href="{% url 'create_group' %}"
-           class="inline-block text-white bg-green-700 px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-semibold">
-            Create Your First Chama
-        </a>
+    <!-- ── Empty state ── -->
+    <div class="dash-empty">
+        <div class="dash-empty__icon" aria-hidden="true">
+            <i class="fas fa-people-group"></i>
+        </div>
+        <h2 class="dash-empty__title">No Chamas yet</h2>
+        <p class="dash-empty__sub">
+            You haven't joined any group yet. Create one and invite your circle, or join an existing group with a code.
+        </p>
+        <div class="dash-empty__actions">
+            <a href="{% url 'create_group' %}" class="btn btn-primary">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                Create Your First Chama
+            </a>
+            <a href="{% url 'join_group' %}" class="btn btn-secondary">
+                Join with a Code
+            </a>
+        </div>
     </div>
 {% endif %}
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
 document.fonts.ready.then(() => {
-    /* Welcome heading — word-by-word, project green-700 */
+    /* Welcome heading — word-by-word */
     SplitText('#dash-welcome', {
         splitType : 'words',
         delay     : 80,
@@ -95,7 +131,6 @@ document.fonts.ready.then(() => {
             });
         }
     });
-
     gsap.set('#dash-sub', { y: 12 });
 });
 </script>

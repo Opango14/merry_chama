@@ -1,95 +1,76 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-8 sm:mt-16 px-4">
-    <div class="bg-white shadow-2xl rounded-3xl p-8 sm:p-10">
-        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-green-700">
-            Create New Merry-Go-Round
-        </h2>
+<div class="cf-form-page">
+    <div class="cf-form-card">
+        <div class="cf-form-card__stripe" aria-hidden="true"></div>
+        <div class="cf-form-card__body">
 
-        <form method="POST" class="space-y-5">
-            {% csrf_token %}
+            <!-- Card header -->
+            <div class="cf-form-header">
+                <span class="cf-form-icon" aria-hidden="true">
+                    <i class="fas fa-people-group"></i>
+                </span>
+                <div class="cf-form-header__text">
+                    <h1 class="cf-form-title">Create a New Chama</h1>
+                    <p class="cf-form-sub">Set up your Merry-Go-Round group and invite members.</p>
+                </div>
+            </div>
 
-            {% for field in form %}
-            <div>
-                <label for="{{ field.id_for_label }}"
-                       class="block text-sm font-semibold text-gray-700 mb-1">
-                    {{ field.label }}
-                </label>
+            <!-- Form -->
+            <form method="POST" class="cf-form" novalidate>
+                {% csrf_token %}
 
-                {% if field.errors %}
-                    <ul class="mb-1 space-y-0.5">
+                {% for field in form %}
+                <div class="cf-field {% if field.errors %}cf-field--error{% endif %}">
+                    <label for="{{ field.id_for_label }}" class="cf-label">
+                        {{ field.label }}
+                    </label>
+
+                    {% if field.errors %}
+                    <ul class="cf-errors" role="alert">
                         {% for error in field.errors %}
-                            <li class="text-xs text-red-600">{{ error }}</li>
+                        <li>{{ error }}</li>
                         {% endfor %}
                     </ul>
-                {% endif %}
+                    {% endif %}
 
-                {{ field }}
+                    {% if field.field.widget.input_type == 'select' or field.widget_type == 'select' %}
+                    <div class="cf-select-wrap">{{ field }}</div>
+                    {% else %}
+                    {{ field }}
+                    {% endif %}
 
-                {% if field.help_text %}
-                    <div class="field-help">{{ field.help_text|safe }}</div>
-                {% endif %}
+                    {% if field.help_text %}
+                    <div class="cf-help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="cf-submit">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Create Chama Group
+                </button>
+            </form>
+
+            <!-- Tip -->
+            <div class="cf-tip">
+                <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                <span>Start with the people you trust. You can share the invite code with members after creating the group.</span>
             </div>
-            {% endfor %}
 
-            <button type="submit"
-                class="mt-4 w-full bg-green-700 hover:bg-green-800 active:bg-green-900
-                       text-white font-semibold py-3.5 rounded-2xl text-base sm:text-lg
-                       transition duration-200 shadow-md hover:shadow-lg">
-                Create Chama Group
-            </button>
-        </form>
+            <!-- Back link -->
+            <a href="{% url 'dashboard' %}" class="cf-back-link">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                Back to Dashboard
+            </a>
 
-        <p class="text-center text-xs text-gray-400 mt-6">
-            Tip: Start with the people you trust. You can invite more members later.
-        </p>
+        </div>
     </div>
 </div>
-
-<style>
-    /* Style all form inputs and selects */
-    #id_name,
-    #id_contribution_amount,
-    #id_savings_rate,
-    #id_frequency {
-        display: block;
-        width: 100%;
-        border: 1.5px solid #d1d5db;
-        border-radius: 0.75rem;
-        padding: 0.65rem 0.85rem;
-        font-size: 1rem;
-        color: #111827;
-        background: #f9fafb;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        box-sizing: border-box;
-    }
-    #id_name:focus,
-    #id_contribution_amount:focus,
-    #id_savings_rate:focus,
-    #id_frequency:focus {
-        border-color: #16a34a;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
-        background: #fff;
-    }
-
-    /* Help text styling — same as register/login pages */
-    .field-help,
-    .field-help ul,
-    .field-help p {
-        margin-top: 0.25rem;
-        font-size: 0.75rem;
-        color: #6b7280;
-        line-height: 1.5;
-    }
-    .field-help ul {
-        list-style: none;
-        padding: 0;
-        margin: 0.25rem 0 0 0;
-    }
-    .field-help li + li {
-        margin-top: 0.1rem;
-    }
-</style>
 {% endblock %}

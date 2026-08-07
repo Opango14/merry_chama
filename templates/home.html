@@ -1,127 +1,236 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<script src="{% static 'js/magnet.js' %}" defer></script>
+{% endblock %}
+
 {% block content %}
-<div class="flex flex-col items-center text-center py-12 sm:py-20 px-4 gap-6 sm:gap-8">
 
+<!-- ── Hero ── -->
+<div class="relative flex flex-col items-center text-center py-14 sm:py-24 px-4 gap-6 sm:gap-7 overflow-hidden">
 
-    <!-- SplitText target: heading -->
+    <!-- Radial glow background -->
+    <div aria-hidden="true"
+         class="pointer-events-none absolute inset-x-0 -top-24 h-72 opacity-60"
+         style="background: radial-gradient(60% 60% at 50% 0%, rgba(34,197,94,0.16), transparent 70%);"></div>
+
+    <!-- Badge -->
+    <span class="badge badge-green relative">
+        <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
+        Built for trusted savings circles
+    </span>
+
+    <!-- Heading with gradient text -->
     <h1 id="hero-heading"
-        class="text-4xl sm:text-5xl lg:text-6xl font-bold text-green-700 leading-tight split-parent">
-        Merry-Go-Round + Smart Savings
+        class="relative text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight split-parent max-w-3xl">
+        Merry-Go-Round <span class="gradient-text">+ Smart Savings</span>
     </h1>
 
-    <!-- Tagline — hidden initially by GSAP (not CSS), revealed after heading finishes -->
-    <p id="hero-tagline"
-       class="text-lg sm:text-2xl text-gray-600 split-parent">
+    <!-- Tagline -->
+    <p id="hero-tagline" class="relative text-lg sm:text-xl split-parent max-w-xl" style="opacity:0;">
         Contribute • Rotate • Save • Share
     </p>
 
-    <!-- CTA — hidden initially by GSAP, slides up after tagline finishes -->
-    <!-- Magnet wrapper: the outer span is the detection zone, the inner anchor moves -->
-    <span id="magnet-wrapper" style="display:inline-block; position:relative;">
-        <a id="hero-cta"
-           href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}"
-           style="display:inline-block; will-change:transform;"
-           class="bg-green-600 text-white text-base sm:text-xl px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-semibold hover:bg-green-700 transition">
-            Start Your Chama Today
+    <!-- CTAs -->
+    <div class="relative flex flex-col sm:flex-row items-center gap-3 mt-2">
+        <span id="magnet-wrapper" style="display:inline-block; position:relative;">
+            <a id="hero-cta"
+               href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}"
+               style="display:inline-block; will-change:transform;"
+               class="btn btn-primary btn-xl">
+                Start Your Chama Today
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </a>
+        </span>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'login' %}" class="btn btn-secondary btn-xl">
+            I already have an account
         </a>
-    </span>
+        {% endif %}
+    </div>
 </div>
+
+<!-- ── Trust stats ── -->
+<div class="grid grid-cols-3 gap-3 sm:gap-6 mt-2 sm:mt-4 max-w-2xl mx-auto text-center">
+    <div>
+        <p class="number-counter text-2xl sm:text-3xl font-bold"
+           style="color: var(--clr-brand-700);"
+           data-target="100">0</p>
+        <p class="text-xs sm:text-sm mt-1" style="color: var(--clr-neutral-500);">% transparent ledger</p>
+    </div>
+    <div>
+        <p class="number-counter text-2xl sm:text-3xl font-bold"
+           style="color: var(--clr-brand-700);"
+           data-target="0">0</p>
+        <p class="text-xs sm:text-sm mt-1" style="color: var(--clr-neutral-500);">Setup cost, always free</p>
+    </div>
+    <div>
+        <p class="number-counter text-2xl sm:text-3xl font-bold"
+           style="color: var(--clr-brand-700);"
+           data-target="24">0</p>
+        <p class="text-xs sm:text-sm mt-1" style="color: var(--clr-neutral-500);">/7 access to your group</p>
+    </div>
+</div>
+
+<!-- ── Feature bento grid ── -->
+<div class="mt-16 sm:mt-24">
+    <h2 class="text-2xl sm:text-3xl font-bold text-center" style="color: var(--clr-neutral-900);">
+        Everything your chama needs
+    </h2>
+    <p class="text-center mt-2 mb-10 text-sm sm:text-base" style="color: var(--clr-neutral-500);">
+        One place to track rotation order, contributions and shared savings.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+
+        <div class="card card-hover card-spotlight md:col-span-2 p-6 sm:p-8">
+            <span class="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-4"
+                  style="background: var(--clr-brand-100); color: var(--clr-brand-700);">
+                <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+            </span>
+            <h3 class="text-lg font-semibold mb-1" style="color: var(--clr-neutral-900);">Automatic rotation order</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--clr-neutral-500);">
+                Members join with an invite code and are automatically queued for their turn to receive the pot — no spreadsheets, no arguments.
+            </p>
+        </div>
+
+        <div class="card card-hover card-spotlight p-6 sm:p-8">
+            <span class="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-4"
+                  style="background: #dbeafe; color: #1d4ed8;">
+                <i class="fa-solid fa-piggy-bank" aria-hidden="true"></i>
+            </span>
+            <h3 class="text-lg font-semibold mb-1" style="color: var(--clr-neutral-900);">Built-in savings pot</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--clr-neutral-500);">
+                A configurable percentage of every contribution is set aside automatically and distributed equally at cycle end.
+            </p>
+        </div>
+
+        <div class="card card-hover card-spotlight p-6 sm:p-8">
+            <span class="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-4"
+                  style="background: #fef3c7; color: #92400e;">
+                <i class="fa-solid fa-file-excel" aria-hidden="true"></i>
+            </span>
+            <h3 class="text-lg font-semibold mb-1" style="color: var(--clr-neutral-900);">Exportable records</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--clr-neutral-500);">
+                Download a clean, formatted Excel report of every contribution and payout for your own bookkeeping.
+            </p>
+        </div>
+
+        <div class="card card-hover card-spotlight md:col-span-2 p-6 sm:p-8">
+            <span class="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-4"
+                  style="background: var(--clr-brand-100); color: var(--clr-brand-700);">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            </span>
+            <h3 class="text-lg font-semibold mb-1" style="color: var(--clr-neutral-900);">Admin-controlled, member-visible</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--clr-neutral-500);">
+                Only the group creator records payments and issues payouts, while every member can see the ledger in real time.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── How it works ── -->
+<div class="mt-16 sm:mt-24 mb-8">
+    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-10" style="color: var(--clr-neutral-900);">
+        How it works
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+        <div class="text-center">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white mx-auto mb-3"
+                 style="background: var(--clr-brand-600);">1</div>
+            <h3 class="font-semibold mb-1" style="color: var(--clr-neutral-900);">Create or join</h3>
+            <p class="text-sm" style="color: var(--clr-neutral-500);">
+                Start a chama and set the contribution amount, or join one with an invite code.
+            </p>
+        </div>
+        <div class="text-center">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white mx-auto mb-3"
+                 style="background: var(--clr-brand-600);">2</div>
+            <h3 class="font-semibold mb-1" style="color: var(--clr-neutral-900);">Contribute each cycle</h3>
+            <p class="text-sm" style="color: var(--clr-neutral-500);">
+                The admin records each member's payment; savings are set aside automatically.
+            </p>
+        </div>
+        <div class="text-center">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white mx-auto mb-3"
+                 style="background: var(--clr-brand-600);">3</div>
+            <h3 class="font-semibold mb-1" style="color: var(--clr-neutral-900);">Rotate and grow</h3>
+            <p class="text-sm" style="color: var(--clr-neutral-500);">
+                The pot goes to the next member in line, and the shared savings pot keeps growing.
+            </p>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
 document.fonts.ready.then(() => {
-
-    /* Hide tagline & CTA via GSAP so the parent elements stay in the DOM
-       and layout is preserved — Tailwind opacity-0 on the parent breaks
-       child-span animations because the parent never becomes visible. */
     gsap.set('#hero-tagline', { opacity: 0, y: 16 });
     gsap.set('#hero-cta',     { opacity: 0, y: 20 });
 
-    /* Step 1: Heading — char-by-char with slight rotation */
     SplitText('#hero-heading', {
-        splitType : 'chars',
-        delay     : 40,
+        splitType : 'words',
+        delay     : 60,
         duration  : 0.7,
         ease      : 'power3.out',
-        from      : { opacity: 0, y: 48, rotate: 8 },
-        to        : { opacity: 1, y: 0,  rotate: 0 },
+        from      : { opacity: 0, y: 32 },
+        to        : { opacity: 1, y: 0 },
         threshold : 0.05,
         rootMargin: '0px',
         textAlign : 'center',
         onLetterAnimationComplete: () => {
-
-            /* Step 2: Make tagline parent fully visible FIRST,
-               then SplitText animates the individual word spans inside it */
             gsap.set('#hero-tagline', { opacity: 1, y: 0 });
-
             SplitText('#hero-tagline', {
                 splitType : 'words',
                 delay     : 80,
                 duration  : 0.6,
                 ease      : 'power2.out',
                 from      : { opacity: 0, y: 24 },
-                to        : { opacity: 1, y: 0  },
+                to        : { opacity: 1, y: 0 },
                 threshold : 0.05,
                 rootMargin: '0px',
                 textAlign : 'center',
                 onLetterAnimationComplete: () => {
-
-                    /* Step 3: CTA slides up below the tagline */
-                    gsap.to('#hero-cta', {
-                        opacity  : 1,
-                        y        : 0,
-                        duration : 0.5,
-                        ease     : 'power2.out'
-                    });
+                    gsap.to('#hero-cta', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
                 }
             });
         }
     });
 });
 
-/* ── Magnet effect for the CTA button ───────────────────────────────────
-   Mirrors the React Bits <Magnet /> component props:
-     padding        = 60   (px zone around the button that activates pull)
-     magnetStrength = 4    (higher = less movement)
-     activeTransition   = 'transform 0.3s ease-out'
-     inactiveTransition = 'transform 0.5s ease-in-out'
-─────────────────────────────────────────────────────────────────────── */
-(function () {
-    const PADDING        = 60;
-    const STRENGTH       = 4;
-    const ACTIVE_TR      = 'transform 0.3s ease-out';
-    const INACTIVE_TR    = 'transform 0.5s ease-in-out';
-
-    const wrapper = document.getElementById('magnet-wrapper');
-    const inner   = document.getElementById('hero-cta');
-    if (!wrapper || !inner) return;
-
-    let active = false;
-
-    window.addEventListener('mousemove', function (e) {
-        const rect    = wrapper.getBoundingClientRect();
-        const centerX = rect.left + rect.width  / 2;
-        const centerY = rect.top  + rect.height / 2;
-        const distX   = Math.abs(centerX - e.clientX);
-        const distY   = Math.abs(centerY - e.clientY);
-
-        if (distX < rect.width / 2 + PADDING && distY < rect.height / 2 + PADDING) {
-            if (!active) {
-                active = true;
-                inner.style.transition = ACTIVE_TR;
+/* Animate trust stat numbers */
+document.addEventListener('DOMContentLoaded', function () {
+    const counters = document.querySelectorAll('.number-counter[data-target]');
+    if (!counters.length) return;
+    const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            io.unobserve(el);
+            const target  = parseFloat(el.dataset.target);
+            const prefix  = el.dataset.prefix  || '';
+            const decimals = parseInt(el.dataset.decimals || '0', 10);
+            const duration = 900;
+            const start    = performance.now();
+            function tick(now) {
+                const p = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = prefix + (target * eased).toLocaleString(undefined, {
+                    minimumFractionDigits: decimals, maximumFractionDigits: decimals,
+                });
+                if (p < 1) requestAnimationFrame(tick);
+                else el.textContent = prefix + target.toLocaleString(undefined, {
+                    minimumFractionDigits: decimals, maximumFractionDigits: decimals,
+                });
             }
-            const offsetX = (e.clientX - centerX) / STRENGTH;
-            const offsetY = (e.clientY - centerY) / STRENGTH;
-            inner.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0)`;
-        } else {
-            if (active) {
-                active = false;
-                inner.style.transition = INACTIVE_TR;
-                inner.style.transform  = 'translate3d(0, 0, 0)';
-            }
-        }
-    });
-}());
+            requestAnimationFrame(tick);
+        });
+    }, { threshold: 0.4 });
+    counters.forEach(function (c) { io.observe(c); });
+});
 </script>
 {% endblock %}

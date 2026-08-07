@@ -1,0 +1,204 @@
+/* ══════════════════════════════════════════════════════════════════
+   ChamaFlow — Animations
+   Phase 9: CSS keyframes and micro-interaction polish.
+   Loaded globally via base.html after responsive.css.
+════════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────────
+   Keyframes
+─────────────────────────────────────────────────────────────────── */
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes slide-down {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1);    }
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Scroll-reveal utility — JS adds .is-visible via IntersectionObserver
+─────────────────────────────────────────────────────────────────── */
+.anim-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity  0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.anim-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger delays for sibling groups */
+.anim-reveal:nth-child(1) { transition-delay: 0s;     }
+.anim-reveal:nth-child(2) { transition-delay: 0.07s;  }
+.anim-reveal:nth-child(3) { transition-delay: 0.14s;  }
+.anim-reveal:nth-child(4) { transition-delay: 0.21s;  }
+.anim-reveal:nth-child(5) { transition-delay: 0.28s;  }
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .anim-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Dashboard card hover — subtle 3D tilt + glow
+─────────────────────────────────────────────────────────────────── */
+.dash-card {
+    transform-style: preserve-3d;
+    perspective: 800px;
+    will-change: transform;
+}
+
+/* Gradient shimmer on .dash-card__stripe on hover */
+.dash-card:hover .dash-card__stripe {
+    background: linear-gradient(
+        90deg,
+        var(--clr-brand-700),
+        var(--clr-brand-400),
+        var(--clr-brand-700)
+    );
+    background-size: 200% 100%;
+    animation: stripe-shimmer 1.8s ease infinite;
+}
+
+@keyframes stripe-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Button — subtle shine sweep on hover
+─────────────────────────────────────────────────────────────────── */
+.btn-primary,
+.cf-submit,
+.auth-submit {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after,
+.cf-submit::after,
+.auth-submit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.18) 50%,
+        transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+}
+.btn-primary:hover::after,
+.cf-submit:hover::after,
+.auth-submit:hover::after {
+    left: 140%;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Input focus — ring pulse once on focus
+─────────────────────────────────────────────────────────────────── */
+.auth-form input:focus,
+.cf-form input:focus,
+.cf-form select:focus,
+.cf-code-input:focus {
+    animation: ring-pulse 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes ring-pulse {
+    0%   { box-shadow: 0 0 0 0   rgba(21, 128, 61, 0.28); }
+    60%  { box-shadow: 0 0 0 5px rgba(21, 128, 61, 0.12); }
+    100% { box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.18); }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Auth form panel — slide in on load
+─────────────────────────────────────────────────────────────────── */
+.auth-form-panel {
+    animation: slide-down 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.1s;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Form card — fade up on load
+─────────────────────────────────────────────────────────────────── */
+.cf-form-card {
+    animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.08s;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Nav links — micro-scale on click
+─────────────────────────────────────────────────────────────────── */
+.cf-nav__link:active { transform: scale(0.96); }
+.cf-nav__cta:active  { transform: scale(0.95); }
+
+/* ──────────────────────────────────────────────────────────────────
+   Toasts — already have fade-in; add subtle slide-in from top
+─────────────────────────────────────────────────────────────────── */
+.toast { animation: toast-slide 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes toast-slide {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0);     }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Group detail info cards — pulse the amount value when it counts up
+─────────────────────────────────────────────────────────────────── */
+.count-up-done {
+    animation: amount-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes amount-pop {
+    0%   { transform: scale(0.92); }
+    60%  { transform: scale(1.04); }
+    100% { transform: scale(1);    }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Skeleton loader utility (for future use)
+─────────────────────────────────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--clr-neutral-100) 25%,
+        var(--clr-neutral-50)  50%,
+        var(--clr-neutral-100) 75%
+    );
+    background-size: 600px 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+    border-radius: var(--radius-md);
+    color: transparent;
+    user-select: none;
+}
