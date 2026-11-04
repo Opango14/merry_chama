@@ -14,7 +14,22 @@ Merry Chama is a Django web application for managing chama groups, contributions
 
 - Python 3.11+
 - Django 6.0
+- PostgreSQL 14+
 - Virtual environment
+
+## Database setup (PostgreSQL)
+
+Create a database and user before running the app:
+
+```sql
+CREATE DATABASE merry_chama;
+CREATE USER merry_chama_user WITH PASSWORD 'your-password';
+GRANT ALL PRIVILEGES ON DATABASE merry_chama TO merry_chama_user;
+\c merry_chama
+GRANT ALL ON SCHEMA public TO merry_chama_user;
+```
+
+Then set the `DB_*` values in your `.env` file (see below).
 
 ## Local development
 
@@ -28,6 +43,7 @@ bash start.sh
 
 This will:
 - create a virtual environment if needed
+- load variables from `.env`
 - install dependencies
 - apply migrations
 - start the Django development server at http://0.0.0.0:8000/
@@ -72,8 +88,12 @@ SECRET_KEY=change-me
 DEBUG=False
 ALLOWED_HOSTS=localhost,127.0.0.1,your-domain.com
 CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1,https://your-domain.com
-DB_ENGINE=django.db.backends.sqlite3
-DB_NAME=db.sqlite3
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=merry_chama
+DB_USER=merry_chama_user
+DB_PASSWORD=your-password
+DB_HOST=localhost
+DB_PORT=5432
 ```
 
 ## Project structure
