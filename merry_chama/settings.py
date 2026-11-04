@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import parse_qsl, unquote, urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -95,16 +96,48 @@ WSGI_APPLICATION = 'merry_chama.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', 'merry_chama'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+def database_from_url(url):
+    """Build a Django DATABASES entry from a postgres:// connection string."""
+    parsed = urlparse(url)
+    if parsed.scheme not in {"postgres", "postgresql"}:
+        raise ValueError("DATABASE_URL must start with postgres:// or postgresql://")
+    config = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': unquote(parsed.path.lstrip('/')),
+        'USER': unquote(parsed.username or ''),
+        'PASSWORD': unquote(parsed.password or ''),
+        'HOST': parsed.hostname or '',
+        'PORT': str(parsed.port or 5432),
+        # Reuse connections briefly, but check they are alive first
+        # (serverless hosts such as Neon close idle connections).
+        'CONN_MAX_AGE': 60,
+        'CONN_HEALTH_CHECKS': True,
+        # Safe with pooled (PgBouncer) connection strings.
+        'DISABLE_SERVER_SIDE_CURSORS': True,
     }
-}
+    # Pass through options from the URL, e.g. ?sslmode=require
+    options = dict(parse_qsl(parsed.query))
+    options.pop('channel_binding', None)  # not needed; avoids driver issues
+    if options:
+        config['OPTIONS'] = options
+    return config
+
+
+# Hosted databases (Neon, Supabase, Aiven, ...) provide a single DATABASE_URL.
+# For local development you can use the individual DB_* variables instead.
+if os.getenv('DATABASE_URL'):
+    DATABASES = {'default': database_from_url(os.environ['DATABASE_URL'])}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+            'NAME': os.getenv('DB_NAME', 'merry_chama'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 
 # Password validation
